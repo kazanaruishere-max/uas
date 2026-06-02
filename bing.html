@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studi Interaktif: English Grade X PG - SMK Cyber Media</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for premium look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen transition-colors duration-300">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-md shadow-blue-500/20">
+                    <i class="fa-solid fa-language text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-md sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">SMK Cyber Media</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Asesmen Mandiri - English Grade X PG</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Theme Toggle -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-moon text-lg block dark:hidden"></i>
+                    <i class="fa-solid fa-sun text-lg hidden dark:block"></i>
+                </button>
+                <!-- Mode Toggle -->
+                <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex items-center space-x-1 border border-slate-200 dark:border-slate-700">
+                    <button id="btnPracticeMode" onclick="setMode('practice')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm">
+                        <i class="fa-solid fa-graduation-cap mr-1"></i> Belajar
+                    </button>
+                    <button id="btnExamMode" onclick="setMode('exam')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-500 dark:text-slate-400 hover:text-slate-700">
+                        <i class="fa-solid fa-file-invoice mr-1"></i> Ujian
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Left Sidebar: Progress and Navigation Grid -->
+            <aside class="lg:col-span-1 order-2 lg:order-1">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm sticky top-24 space-y-5">
+                    
+                    <!-- Timer Widget for Exam Mode -->
+                    <div id="examTimerContainer" class="hidden bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 p-4 rounded-xl text-center">
+                        <span class="text-xs text-red-600 dark:text-red-400 font-bold uppercase tracking-wider block mb-1">Sisa Waktu Ujian</span>
+                        <span id="examTimer" class="font-mono text-2xl font-black text-red-600 dark:text-red-400">90:00</span>
+                    </div>
+
+                    <!-- Progress Statistics -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kemajuan Pengerjaan</span>
+                            <span id="progressPercent" class="text-xs font-bold text-blue-600 dark:text-blue-400">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                            <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question Navigation Grid -->
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Daftar Nomor Soal</h3>
+                        
+                        <!-- Pilihan Ganda Grid -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500">Part A: Multiple Choice</h4>
+                            <div class="grid grid-cols-5 gap-2" id="pgNavGrid">
+                                <!-- Generated Dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Essay Grid -->
+                        <div class="space-y-3 mt-4">
+                            <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500">Part B: Essay</h4>
+                            <div class="grid grid-cols-5 gap-2" id="essayNavGrid">
+                                <!-- Generated Dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reset and Actions -->
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col space-y-2">
+                        <button onclick="openResetModal()" class="w-full text-center py-2.5 px-4 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition">
+                            <i class="fa-solid fa-trash-can mr-1.5"></i> Bersihkan Semua Jawaban
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Middle & Right Content: Active Question Workspace -->
+            <section class="lg:col-span-3 order-1 lg:order-2 space-y-6">
+                
+                <!-- Welcome/Instruction Banner -->
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-6 shadow-lg shadow-blue-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/30 text-white mb-1.5">
+                            <i class="fa-solid fa-bullhorn mr-1"></i> Mode Belajar Aktif
+                        </span>
+                        <h2 class="text-lg font-extrabold tracking-tight" id="bannerTitle">Selamat Datang di Studio Latihan!</h2>
+                        <p class="text-sm text-blue-100" id="bannerDesc">Klik salah satu opsi pilihan ganda untuk melihat verifikasi jawaban secara instan beserta kunci pembahasannya.</p>
+                    </div>
+                    <div id="bannerAction" class="shrink-0">
+                        <div class="bg-white/10 px-4 py-2 rounded-xl text-center border border-white/10">
+                            <span class="block text-2xl font-black tracking-tight" id="scoreIndicator">0/45</span>
+                            <span class="text-[10px] text-blue-100 font-bold uppercase tracking-wider block">Terjawab</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Active Question Wrapper Card -->
+                <div id="quizWorkspace" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 relative min-h-[400px]">
+                    <!-- Question Card Container (Generated Dynamically) -->
+                    <div id="activeQuestionContainer" class="space-y-6 animate-fadeIn">
+                        <!-- Dynamic Content Goes Here -->
+                    </div>
+
+                    <!-- Navigation Action Buttons -->
+                    <div class="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <button id="prevBtn" onclick="navigateQuestion(-1)" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-bold text-slate-600 dark:text-slate-300 transition flex items-center">
+                            <i class="fa-solid fa-chevron-left mr-2"></i> Sebelumnya
+                        </button>
+                        <button id="submitExamBtn" onclick="openSubmitModal()" class="hidden px-6 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-sm font-bold shadow-lg shadow-green-500/20 transition">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Jawaban Ujian
+                        </button>
+                        <button id="nextBtn" onclick="navigateQuestion(1)" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-lg shadow-blue-500/20 transition flex items-center">
+                            Berikutnya <i class="fa-solid fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeResetModal()"></div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl max-w-sm w-full relative z-10 space-y-4">
+            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="text-center space-y-1">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Reset Semua Jawaban?</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Tindakan ini akan mengosongkan seluruh lembar isian PG dan essay dari memori penyimpanan lokal.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="closeResetModal()" class="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Batal</button>
+                <button onclick="confirmReset()" class="w-full py-2 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-lg shadow-red-500/20 transition">Ya, Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Submit Confirmation Modal -->
+    <div id="submitModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeSubmitModal()"></div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl max-w-sm w-full relative z-10 space-y-4">
+            <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <div class="text-center space-y-1">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Selesaikan Ujian?</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Pastikan seluruh lembar jawaban pilihan ganda dan essay sudah terisi sebelum menyelesaikan ujian.</p>
+            </div>
+            <div id="submitSummary" class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl text-center text-xs space-y-1">
+                <!-- Will be filled in by JS -->
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="closeSubmitModal()" class="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Kembali</button>
+                <button onclick="confirmSubmit()" class="w-full py-2 px-4 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-bold shadow-lg shadow-green-500/20 transition">Kirim Ujian</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic and Data Banks -->
+    <script>
+        // Database of 40 Multiple Choice Questions (faithful to the Kisi-Kisi Bahasa Inggris)
+        const questions = [
+            {
+                id: 1,
+                topic: "Recount Text (Communicative Purpose)",
+                passageId: 1,
+                question: "What is the main communicative purpose of the text above?",
+                options: {
+                    A: "To describe a science museum's building in detail.",
+                    B: "To persuade readers to study harder in physics.",
+                    C: "To retell a past experience of visiting the science museum.",
+                    D: "To explain the scientific steps of electricity generation."
+                },
+                correct: "C",
+                pembahasan: "Teks di atas merupakan Recount Text (Personal Recount) yang menceritakan kembali rangkaian pengalaman masa lalu berwisata ke museum sains, maka tujuan utamanya adalah 'to retell a past experience'."
+            },
+            {
+                id: 2,
+                topic: "Recount Text (Generic Structure)",
+                passageId: 1,
+                question: "Which generic structure of a recount text introduces 'who, when, and where' the story took place?",
+                options: {
+                    A: "Events",
+                    B: "Orientation",
+                    C: "Reorientation",
+                    D: "Resolution"
+                },
+                correct: "B",
+                pembahasan: "Bagian pendahuluan awal (Orientation) bertujuan mengenalkan latar belakang cerita seperti tokoh (who), waktu peristiwa (when), dan lokasi kejadian (where)."
+            },
+            {
+                id: 3,
+                topic: "Recount Text (Language Features)",
+                passageId: 1,
+                question: "'First, we went to the space section...' What is the grammatical function of the underlined word 'First' in the recount text?",
+                options: {
+                    A: "Specific participant",
+                    B: "Action verb",
+                    C: "Time connective",
+                    D: "Adjective of quality"
+                },
+                correct: "C",
+                pembahasan: "Kata 'First' bertindak sebagai penunjuk transisi kronologis urutan waktu (time connectives / transitional words) dalam menceritakan urutan kejadian."
+            },
+            {
+                id: 4,
+                topic: "Recount Text (Factual Comprehension)",
+                passageId: 1,
+                question: "What did the writer and classmates do right after trying the interactive physics experiments?",
+                options: {
+                    A: "They watched a 3D movie about oceans.",
+                    B: "They went to see the rocket replicas.",
+                    C: "They had lunch at the cafeteria.",
+                    D: "They took a bus journey home."
+                },
+                correct: "C",
+                pembahasan: "Sesuai urutan teks di paragraf 2: '...tried several interactive physics experiments. I personally loved... Next, we had a delicious lunch at the museum cafeteria.' Jadi, setelah bereksperimen mereka makan siang."
+            },
+            {
+                id: 5,
+                topic: "Recount Text (Language Features)",
+                passageId: 1,
+                question: "Why did the writer use the past form words like 'went, tried, watched' instead of 'go, try, watch'?",
+                options: {
+                    A: "To express a general habit.",
+                    B: "Because the events happened in the past.",
+                    C: "To describe future expectations.",
+                    D: "Because it is an imperative/command sentence."
+                },
+                correct: "B",
+                pembahasan: "Teks recount menceritakan kisah yang sudah tuntas terlaksana di masa lampau, sehingga wajib memakai Simple Past Tense (kata kerja bentuk kedua/V2)."
+            },
+            {
+                id: 6,
+                topic: "Recount Text (Personal Recount)",
+                question: "Which of the following is a primary characteristic of a 'Personal Recount' text?",
+                options: {
+                    A: "It utilizes first-person pronouns like 'I' or 'We'.",
+                    B: "It tells a fictional story about talking animals.",
+                    C: "It does not require any chronological order.",
+                    D: "It discusses the writer's future plans."
+                },
+                correct: "A",
+                pembahasan: "Personal recount menceritakan pengalaman pribadi penulis, sehingga ciri utamanya adalah memakai kata ganti orang pertama (I, we)."
+            },
+            {
+                id: 7,
+                topic: "Recount Text (Reorientation)",
+                question: "In a recount text structure, where can we usually find the writer's personal comments or feelings about the past event?",
+                options: {
+                    A: "Orientation",
+                    B: "Events",
+                    C: "Reorientation",
+                    D: "Introduction"
+                },
+                correct: "C",
+                pembahasan: "Bagian penutup (Reorientation) memuat komentar evaluasi akhir, perasaan emosional, atau rangkuman personal penulis tentang kejadian tersebut."
+            },
+            {
+                id: 8,
+                topic: "Recount Text (Historical Recount)",
+                question: "A 'Historical Recount' is a type of recount text that aims to...",
+                options: {
+                    A: "Tell the readers about imaginative dreams in space.",
+                    B: "Give instructions on how to study history.",
+                    C: "Retell a factual historical event in chronological order.",
+                    D: "Offer opinions on historical movies."
+                },
+                correct: "C",
+                pembahasan: "Historical recount menyajikan laporan kronologis sejarah nyata (faktual) di masa lampau demi memberi informasi mendalam kepada pembaca."
+            },
+            {
+                id: 9,
+                topic: "Simple Present Tense (Subject-Verb Agreement)",
+                question: "Our teacher, Mr. Tangguh, _______ English lessons at SMK Cyber Media every day.",
+                options: {
+                    A: "teach",
+                    B: "teaches",
+                    C: "taught",
+                    D: "teaching"
+                },
+                correct: "B",
+                pembahasan: "Subjek tunggal orang ketiga (He / Mr. Tangguh) dalam Simple Present Tense diikuti kata kerja V1 berakhiran -es karena kata 'teach' diakhiri fonem -ch (teaches)."
+            },
+            {
+                id: 10,
+                topic: "Simple Present Tense (Negative Sentence)",
+                question: "The students _______ play football outside when it rains; they prefer staying inside.",
+                options: {
+                    A: "does not",
+                    B: "do not",
+                    C: "are not",
+                    D: "did not"
+                },
+                correct: "B",
+                pembahasan: "Subjek jamak (They / The students) membutuhkan kata kerja bantu negatif 'do not' (don't) pada present tense."
+            },
+            {
+                id: 11,
+                topic: "Simple Present Tense (General Truth)",
+                question: "Which of the following sentences correctly expresses a general truth or scientific fact?",
+                options: {
+                    A: "Water freezes at 0 degrees Celsius.",
+                    B: "Water froze yesterday evening.",
+                    C: "Water is freezing right now.",
+                    D: "Water will freeze next week."
+                },
+                correct: "A",
+                pembahasan: "Kebenaran ilmiah mutlak/fakta fisika selalu dirumuskan menggunakan Simple Present Tense (S + V1 s/es)."
+            },
+            {
+                id: 12,
+                topic: "Simple Present Tense (Spelling Rule)",
+                question: "Maria is very disciplined. She always _______ her teeth twice a day.",
+                options: {
+                    A: "brush",
+                    B: "brushes",
+                    C: "brushing",
+                    D: "brushed"
+                },
+                correct: "B",
+                pembahasan: "Subjek tunggal (Maria/She) diikuti kata kerja V1 berakhiran -es karena kata 'brush' berakhiran bunyi sibilan -sh (brushes)."
+            },
+            {
+                id: 13,
+                topic: "Simple Present Tense (Spelling Exception)",
+                question: "In Simple Present Tense, why does 'study' change to 'studies' when matched with the subject 'He' or 'She'?",
+                options: {
+                    A: "Because it is a plural verb form.",
+                    B: "Because of the third-person singular rule for verbs ending in a consonant + y.",
+                    C: "Because the event already ended in the past.",
+                    D: "Because it represents an imaginative dream."
+                },
+                correct: "B",
+                pembahasan: "Aturan perubahan: jika kata kerja berakhiran konsonan + y (seperti d + y pada study), ubah y menjadi i, lalu tambahkan -es jika subjeknya tunggal."
+            },
+            {
+                id: 14,
+                topic: "Simple Present Tense (Short Response)",
+                question: "\"Do you enjoy learning in a quiet library?\" What is the correct short response of agreement?",
+                options: {
+                    A: "Yes, I am.",
+                    B: "Yes, I did.",
+                    C: "Yes, I do.",
+                    D: "No, I don't."
+                },
+                correct: "C",
+                pembahasan: "Jawaban singkat persetujuan (agreement) untuk pertanyaan interogatif diawali kata bantu 'Do' adalah 'Yes, I do'."
+            },
+            {
+                id: 15,
+                topic: "Simple Present Tense (Signal Words)",
+                question: "Which of the following time signals (signal words) is typically used for Simple Present Tense?",
+                options: {
+                    A: "Last night",
+                    B: "Two days ago",
+                    C: "Usually",
+                    D: "Tomorrow morning"
+                },
+                correct: "C",
+                pembahasan: "'Usually' (biasanya) adalah kata keterangan frekuensi (adverb of frequency) yang mengindikasikan aktivitas rutin/rutinitas present."
+            },
+            {
+                id: 16,
+                topic: "Simple Present Tense (Interrogative Sentence)",
+                question: "Complete the question: \"_______ she study for her English exam every Sunday night?\"",
+                options: {
+                    A: "Do",
+                    B: "Does",
+                    C: "Is",
+                    D: "Did"
+                },
+                correct: "B",
+                pembahasan: "Subjek orang ketiga tunggal (she) membutuhkan auxiliary verb 'Does' dalam kalimat tanya present tense."
+            },
+            {
+                id: 17,
+                topic: "Simple Past Tense (V2 Regular/Irregular)",
+                question: "Last month, my family and I _______ to Jakarta to visit my grandparents.",
+                options: {
+                    A: "go",
+                    B: "went",
+                    C: "gone",
+                    D: "going"
+                },
+                correct: "B",
+                pembahasan: "Penunjuk waktu lampau 'Last month' mengindikasikan Simple Past Tense, menggunakan kata kerja bentuk kedua (Verb 2) dari 'go' yaitu 'went'."
+            },
+            {
+                id: 18,
+                topic: "Simple Past Tense (To Be was/were)",
+                question: "I _______ at school yesterday morning because I stayed at home to rest.",
+                options: {
+                    A: "were not",
+                    B: "was not",
+                    C: "did not",
+                    D: "am not"
+                },
+                correct: "B",
+                pembahasan: "Subjek orang pertama tunggal 'I' berpasangan dengan To-Be lampau 'was not' (wasn't) untuk kalimat non-verbal (nominal)."
+            },
+            {
+                id: 19,
+                topic: "Simple Past Tense (Negative Transformation)",
+                question: "Change this positive sentence into Negative form: 'Rian cooked dinner for his family yesterday.'",
+                options: {
+                    A: "Rian did not cooked dinner for his family yesterday.",
+                    B: "Rian did not cook dinner for his family yesterday.",
+                    C: "Rian does not cook dinner for his family yesterday.",
+                    D: "Rian was not cook dinner for his family yesterday."
+                },
+                correct: "B",
+                pembahasan: "Rumus kalimat negatif Simple Past Tense: S + did not + Verb 1. Maka kata kerja lampau 'cooked' harus diturunkan kembali ke dasar menjadi 'cook'."
+            },
+            {
+                id: 20,
+                topic: "Simple Past Tense (Irregular Verb Recognition)",
+                question: "Which of the following past verbs is categorized as an 'Irregular Verb'?",
+                options: {
+                    A: "Walked",
+                    B: "Visited",
+                    C: "Bought",
+                    D: "Played"
+                },
+                correct: "C",
+                pembahasan: "'Bought' adalah bentuk lampau tak beraturan (irregular verb) dari kata 'buy', sedangkan kata lainnya berakhiran -ed (regular verb)."
+            },
+            {
+                id: 21,
+                topic: "Simple Past Tense (To Be Plural)",
+                question: "We _______ extremely happy when we won the first prize in the programming competition.",
+                options: {
+                    A: "are",
+                    B: "was",
+                    C: "were",
+                    D: "did"
+                },
+                correct: "C",
+                pembahasan: "Subjek jamak orang pertama 'We' berpasangan dengan To-Be masa lampau 'were' untuk kalimat nominal."
+            },
+            {
+                id: 22,
+                topic: "Simple Past Tense (Short Negative Response)",
+                question: "\"Did they enjoy the study tour to Bali last week?\" -> \"No, they _______.\"",
+                options: {
+                    A: "don't",
+                    B: "didn't",
+                    C: "weren't",
+                    D: "doesn't"
+                },
+                correct: "B",
+                pembahasan: "Respons negatif singkat untuk kalimat tanya lampau yang diawali dengan 'Did' adalah 'No, subject + didn't'."
+            },
+            {
+                id: 23,
+                topic: "Simple Past Tense (Spelling Rule)",
+                question: "How do we spell the Past Tense (V2) of the regular verb 'stop'?",
+                options: {
+                    A: "stoped",
+                    B: "stopped",
+                    C: "stops",
+                    D: "stoping"
+                },
+                correct: "B",
+                pembahasan: "Kata berkarakter satu suku kata dengan akhiran vokal tunggal + konsonan tunggal diduplikasi huruf konsonan akhirnya sebelum ditambah -ed (stopped)."
+            },
+            {
+                id: 24,
+                topic: "Simple Past Tense (Pronunciation/Spelling Rule)",
+                question: "What is the past form (V2) of the verb 'read'?",
+                options: {
+                    A: "readed",
+                    B: "read (pronounced /red/)",
+                    C: "reads",
+                    D: "road"
+                },
+                correct: "B",
+                pembahasan: "Tulisan kata kerja past dari 'read' tetaplah 'read', tetapi pelafalan bunyinya berubah menjadi /red/ seperti warna merah."
+            },
+            {
+                id: 25,
+                topic: "Simple Future Tense (Be Going To for Evidence)",
+                question: "\"Look at those dark clouds in the sky! It _______ rain very soon.\"",
+                options: {
+                    A: "will",
+                    B: "is going to",
+                    C: "was going to",
+                    D: "goes to"
+                },
+                correct: "B",
+                pembahasan: "Prediksi yang didasari atas bukti nyata di depan mata (dark clouds) wajib diungkapkan menggunakan 'be going to' (is going to)."
+            },
+            {
+                id: 26,
+                topic: "Simple Future Tense (Be Going To for Prior Plan)",
+                question: "I have already booked the flight ticket. I _______ visit my grandparents next holiday.",
+                options: {
+                    A: "will",
+                    B: "am going to",
+                    C: "would",
+                    D: "goes"
+                },
+                correct: "B",
+                pembahasan: "Rencana yang sudah matang dipersiapkan jauh sebelum berbicara (sudah memesan tiket) menggunakan 'be going to' (am going to)."
+            },
+            {
+                id: 27,
+                topic: "Simple Future Tense (Will for Spontaneous Decisions)",
+                question: "\"The office telephone is ringing!\" -> \"Don't worry, I _______ answer it.\"",
+                options: {
+                    A: "will",
+                    B: "am going to",
+                    C: "would",
+                    D: "should"
+                },
+                correct: "A",
+                pembahasan: "Keputusan spontan/sukarela (spontaneous decision) saat berbicara menggunakan 'will'."
+            },
+            {
+                id: 28,
+                topic: "Simple Future Tense (Negative Sentence)",
+                question: "Complete the negative sentence: \"We _______ attend the graduation tomorrow because we are sick.\"",
+                options: {
+                    A: "will not",
+                    B: "not will",
+                    C: "don't",
+                    D: "are not going"
+                },
+                correct: "A",
+                pembahasan: "Penyangkalan masa depan formal dari 'will' adalah 'will not' (won't) diikuti kata kerja bentuk pertama."
+            },
+            {
+                id: 29,
+                topic: "Simple Future Tense (Will vs Be Going To)",
+                question: "What is the main difference between the use of 'will' and 'be going to' in future plans?",
+                options: {
+                    A: "'will' is for plans made in the past, while 'be going to' is for future schedules.",
+                    B: "'will' is for sudden, spontaneous decisions, while 'be going to' is for pre-planned decisions.",
+                    C: "'will' is only for singular subjects, while 'be going to' is only for plural.",
+                    D: "There is absolutely no difference; both are interchangeable in all situations."
+                },
+                correct: "B",
+                pembahasan: "Will digunakan saat mengambil tindakan spontan pada saat berbicara, sedangkan Be going to ditujukan untuk aktivitas yang telah direncanakan sebelumnya."
+            },
+            {
+                id: 30,
+                topic: "Simple Future Tense (Will for Belief)",
+                question: "\"I believe that she _______ be a successful software developer in the future.\"",
+                options: {
+                    A: "is going to",
+                    B: "will",
+                    C: "was",
+                    D: "is to"
+                },
+                correct: "B",
+                pembahasan: "Prediksi yang didasarkan pada opini/keyakinan pribadi (ditandai 'I believe') umumnya dipasangkan dengan 'will'."
+            },
+            {
+                id: 31,
+                topic: "Simple Future Tense (Response with Will)",
+                question: "\"Will you help me carry these heavy books?\" -> \"Sure, I _______.\"",
+                options: {
+                    A: "will",
+                    B: "am going to",
+                    C: "do",
+                    D: "did"
+                },
+                correct: "A",
+                pembahasan: "Menjawab kesanggupan atas permintaan tolong yang diawali dengan 'Will you...', kita meresponnya dengan 'will' kembali."
+            },
+            {
+                id: 32,
+                topic: "Simple Future Tense (Signal Words)",
+                question: "Which of the following time signals indicates the Simple Future Tense?",
+                options: {
+                    A: "Two days ago",
+                    B: "In a few days",
+                    C: "Last evening",
+                    D: "Just now"
+                },
+                correct: "B",
+                pembahasan: "'In a few days' (dalam beberapa hari) menunjukkan waktu di masa depan (Simple Future)."
+            },
+            {
+                id: 33,
+                topic: "Giving Opinion (Asking for Opinion)",
+                question: "\"What do you think of our school's new computer lab?\" This sentence expresses...",
+                options: {
+                    A: "Giving an opinion",
+                    B: "Asking for an opinion",
+                    C: "Agreeing with an opinion",
+                    D: "Disagreeing with an opinion"
+                },
+                correct: "B",
+                pembahasan: "Ungkapan 'What do you think of...' dirancang secara bahasa untuk menanyakan pendapat orang lain."
+            },
+            {
+                id: 34,
+                topic: "Giving Opinion (Stating Opinion)",
+                question: "\"In my _______, online learning is highly flexible but lacks direct human connection.\"",
+                options: {
+                    A: "viewpoint",
+                    B: "opinion",
+                    C: "feeling",
+                    D: "belief"
+                },
+                correct: "B",
+                pembahasan: "Ekspresi standar untuk mengawali pemaparan pendapat pribadi secara semi-formal/informal adalah 'In my opinion,'."
+            },
+            {
+                id: 35,
+                topic: "Giving Opinion (Strong Agreement)",
+                question: "\"I couldn't agree more with your statement.\" This expression means that...",
+                options: {
+                    A: "I completely disagree with you.",
+                    B: "I completely agree with you.",
+                    C: "I do not understand what you mean.",
+                    D: "I have some doubts about your point."
+                },
+                correct: "B",
+                pembahasan: "Ungkapan 'I couldn't agree more' (saya tidak bisa lebih setuju lagi) berarti persetujuan mutlak/sangat setuju (completely agree)."
+            },
+            {
+                id: 36,
+                topic: "Giving Opinion (Polite Disagreement)",
+                question: "Which of the following phrases is a polite or formal way to show disagreement?",
+                options: {
+                    A: "No way!",
+                    B: "You are totally wrong.",
+                    C: "I'm afraid I disagree.",
+                    D: "That is a bad idea."
+                },
+                correct: "C",
+                pembahasan: "'I'm afraid I disagree' (saya rasa saya kurang setuju) merupakan ungkapan sopan/halus untuk menunjukkan ketidaksetujuan pendapat."
+            },
+            {
+                id: 37,
+                topic: "Giving Opinion (Dialogue Comprehension)",
+                question: "Complete the dialogue below:\nAndi : 'Don't you think playing online games all night is bad for our health?'\nBudi : '_______. It makes us feel extremely tired the next morning.'",
+                options: {
+                    A: "I don't think so",
+                    B: "I agree with you",
+                    C: "I completely disagree",
+                    D: "On the contrary"
+                },
+                correct: "B",
+                pembahasan: "Argumentasi Budi mendukung opini Andi, menunjukkan ia menyetujui pernyataan tersebut ('I agree with you')."
+            },
+            {
+                id: 38,
+                topic: "Giving Opinion (Personally I think)",
+                question: "\"Personally, I think...\" is an expression commonly used to...",
+                options: {
+                    A: "Ask someone else for help.",
+                    B: "Politely interrupt another person.",
+                    C: "Introduce one's personal opinion.",
+                    D: "End a formal conversation."
+                },
+                correct: "C",
+                pembahasan: "Frasa 'Personally, I think...' diletakkan di awal kalimat untuk memperkenalkan pendapat pribadi pembicara."
+            },
+            {
+                id: 39,
+                topic: "Giving Opinion (That makes sense)",
+                question: "\"That makes total sense to me.\" What is the speaker doing?",
+                options: {
+                    A: "Asking for logical proof.",
+                    B: "Agreeing with someone's opinion.",
+                    C: "Refusing to cooperate.",
+                    D: "Changing the topic of conversation."
+                },
+                correct: "B",
+                pembahasan: "Ungkapan 'That makes sense' (itu masuk akal) menunjukkan bahwa pembicara menyetujui argumentasi logis lawan bicaranya."
+            },
+            {
+                id: 40,
+                topic: "Giving Opinion (Agreeing Dialogue)",
+                question: "Complete the dialogue below:\nSarah : 'I feel that strict regulations on social media are necessary to protect teenagers.'\nJohn  : '_______. Cyberbullying can lead to major mental health issues.'",
+                options: {
+                    A: "I see it differently",
+                    B: "You are absolutely right",
+                    C: "I beg to differ",
+                    D: "I am afraid I disagree"
+                },
+                correct: "B",
+                pembahasan: "John menambahkan penjelasan yang mendukung pernyataan Sarah, mengindikasikan persetujuan mutlak ('You are absolutely right')."
+            }
+        ];
+
+        // Database of 5 Essay Questions
+        const essays = [
+            {
+                id: 1,
+                title: "Essay 1: Recount Text - Writing Experience",
+                question: "Write a simple, short Personal Recount paragraph (min. 5 sentences) about your activity during the last weekend.",
+                subQuestion: "Your writing must clearly show its structure: <strong>Orientation</strong> (introduction), <strong>Events</strong> (chronological events), and <strong>Reorientation</strong> (personal feeling or closure)!",
+                correctAnswer: "Model Paragraph:\n\nLast weekend, I visited Kuta Beach with my brother. We went there in the afternoon by motorcycle (Orientation).\n\nFirst, we bought some fresh coconut water at a beach stall. Then, we sat on the sand and watched many tourists playing volleyball. After that, we took some photos when the beautiful sunset arrived (Events).\n\nIt was a highly memorable holiday and I felt very happy after a stressful week at school (Reorientation)."
+            },
+            {
+                id: 2,
+                title: "Essay 2: Simple Past Tense - Error Analysis",
+                question: "Analyse the grammatical mistakes in the following past tense paragraph, and write down the corrected version of the paragraph:",
+                code: `"Yesterday, my sister buy a new novel at the bookstore. She readed it happily in the living room. However, she did not liked the ending because the main character die."`,
+                subQuestion: "Identify the incorrect words, explain why they are wrong, and write the corrected paragraph.",
+                correctAnswer: "Analysis of Errors:\n1. 'buy' -> should be 'bought' (V2 of buy is irregular, required for past tense).\n2. 'readed' -> should be 'read' (pronounced /red/). There is no 'readed' in English.\n3. 'did not liked' -> should be 'did not like' (auxiliary 'did not' must be followed by base verb V1).\n4. 'die' -> should be 'died' (regular past verb needed to describe past state).\n\nCorrected Paragraph:\n'Yesterday, my sister bought a new novel at the bookstore. She read it happily in the living room. However, she did not like the ending because the main character died.'"
+            },
+            {
+                id: 3,
+                title: "Essay 3: Simple Future - Will vs Be Going To",
+                question: "Fill in the blank lines with either <strong>will</strong> or <strong>be going to</strong> in the correct grammatical form, and explain your logical reason:",
+                subQuestion: "1. \"Look at those heavy black clouds! It ___________________ (rain) heavily soon.\"\n2. \"We don't have any eggs in the fridge.\" -> \"Oh, really? I ___________________ (go) and buy a box right now.\"",
+                correctAnswer: "Answers and Explanations:\n\n1. Answer: is going to rain\nExplanation: This is a prediction based on clear, visible physical evidence (heavy black clouds), which strictly requires 'be going to'.\n\n2. Answer: will go\nExplanation: This is a spontaneous decision made at the exact moment of speaking after learning the fridge is empty, which strictly requires 'will'."
+            },
+            {
+                id: 4,
+                title: "Essay 4: Giving Opinion - Dialogue Writing",
+                question: "Construct a brief dialogue (about 4-6 lines) between two classmates, John and Jane, discussing \"Using AI (Artificial Intelligence) in doing school assignments\".",
+                subQuestion: "The dialogue must include expressions of:\n- Asking for opinion\n- Giving opinion\n- Agreeing with the opinion\n- Disagreeing with the opinion",
+                correctAnswer: "Model Dialogue:\n\nJohn: \"Hey Jane, what do you think of using AI like ChatGPT to do school assignments?\" (Asking for opinion)\nJane: \"Personally, I think AI is extremely helpful because it explains complex topics easily.\" (Giving opinion)\nJohn: \"I agree with you. It helps me write code and find bugs very quickly.\" (Agreeing)\nJane: \"But, we must not rely on it too much. Otherwise, we won't learn.\"\nJohn: \"I don't think so. AI is just a tool, like calculators. It depends on how we use it.\" (Disagreeing)"
+            },
+            {
+                id: 5,
+                title: "Essay 5: Irregular & Regular Verbs",
+                question: "Transform the following base verbs (Verb 1) into their Past (Verb 2) and Past Participle (Verb 3) forms, and then construct one correct Past Tense sentence using one of the past verbs you converted!",
+                subQuestion: "Verbs to transform: 1. Sleep, 2. Write, 3. Bring, 4. Cook.",
+                correctAnswer: "Verb Transformations Table:\n- Sleep -> Slept -> Slept (Irregular)\n- Write -> Wrote -> Written (Irregular)\n- Bring -> Brought -> Brought (Irregular)\n- Cook -> Cooked -> Cooked (Regular)\n\nExample Simple Past Tense Sentence:\n\"Yesterday, Kian wrote an impressive Python script for his coding assignment.\""
+            }
+        ];
+
+        // App State Management
+        let appMode = 'practice'; // 'practice' or 'exam'
+        let activeIdx = 0; // 0 to 44 (0-39 are MCQs, 40-44 are Essays)
+        let selectedAnswers = {}; // {questionId: 'A'/'B'/'C'/'D'}
+        let essayAnswers = {}; // {essayId: "student's input text"}
+        let examTimerInterval = null;
+        let examTimeLeft = 90 * 60; // 90 minutes in seconds
+
+        // Load data from localStorage if exists
+        function loadState() {
+            const savedAnswers = localStorage.getItem('selectedAnswers_English');
+            const savedEssayAnswers = localStorage.getItem('savedEssayAnswers_English');
+            if (savedAnswers) selectedAnswers = JSON.parse(savedAnswers);
+            if (savedEssayAnswers) essayAnswers = JSON.parse(savedEssayAnswers);
+        }
+
+        function saveState() {
+            localStorage.setItem('selectedAnswers_English', JSON.stringify(selectedAnswers));
+            localStorage.setItem('savedEssayAnswers_English', JSON.stringify(essayAnswers));
+        }
+
+        // Initialize App
+        window.onload = function() {
+            loadTheme();
+            loadState();
+            renderNavigationGrids();
+            renderActiveQuestion();
+            updateProgress();
+        };
+
+        // Dark Mode Logic
+        function loadTheme() {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Mode Toggler
+        function setMode(mode) {
+            appMode = mode;
+            const btnPractice = document.getElementById('btnPracticeMode');
+            const btnExam = document.getElementById('btnExamMode');
+            const timerContainer = document.getElementById('examTimerContainer');
+            
+            if (mode === 'practice') {
+                btnPractice.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm border border-slate-200 dark:border-slate-600";
+                btnExam.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                timerContainer.classList.add('hidden');
+                
+                document.getElementById('bannerTitle').innerText = "Selamat Datang di Studio Latihan!";
+                document.getElementById('bannerDesc').innerText = "Klik salah satu opsi pilihan ganda untuk melihat verifikasi jawaban secara instan beserta kunci pembahasannya.";
+                
+                clearInterval(examTimerInterval);
+            } else {
+                btnExam.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm border border-slate-200 dark:border-slate-600";
+                btnPractice.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                timerContainer.classList.remove('hidden');
+                
+                document.getElementById('bannerTitle').innerText = "Mode Ujian CBT Diaktifkan!";
+                document.getElementById('bannerDesc').innerText = "Kerjakan seluruh soal dengan fokus. Hasil skor, persentase, kunci jawaban, dan pembahasan akan dirilis setelah ujian dikirim.";
+                
+                startExamTimer();
+            }
+            renderActiveQuestion();
+            renderNavigationGrids();
+        }
+
+        // CBT Timer Controller
+        function startExamTimer() {
+            clearInterval(examTimerInterval);
+            examTimeLeft = 90 * 60; // Reset to 90 mins
+            updateTimerDisplay();
+            
+            examTimerInterval = setInterval(() => {
+                examTimeLeft--;
+                if (examTimeLeft <= 0) {
+                    clearInterval(examTimerInterval);
+                    autoSubmitExam();
+                } else {
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(examTimeLeft / 60);
+            const seconds = examTimeLeft % 60;
+            document.getElementById('examTimer').innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function autoSubmitExam() {
+            confirmSubmit();
+            showCustomMessage("Waktu Habis", "Waktu pengerjaan ujian telah habis. Jawaban dikirim otomatis.");
+        }
+
+        // Navigation Grid Renderers
+        function renderNavigationGrids() {
+            const pgGrid = document.getElementById('pgNavGrid');
+            const essayGrid = document.getElementById('essayNavGrid');
+            
+            pgGrid.innerHTML = '';
+            essayGrid.innerHTML = '';
+
+            // Generate MCQs Buttons (1 to 40)
+            for (let i = 0; i < 40; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.innerText = i + 1;
+                
+                let baseStyle = "w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center border ";
+                
+                if (i === activeIdx) {
+                    baseStyle += "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/20";
+                } else if (selectedAnswers[i + 1]) {
+                    if (appMode === 'practice') {
+                        if (selectedAnswers[i + 1] === questions[i].correct) {
+                            baseStyle += "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-400";
+                        } else {
+                            baseStyle += "bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400";
+                        }
+                    } else {
+                        baseStyle += "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/50 text-blue-600 dark:text-blue-400";
+                    }
+                } else {
+                    baseStyle += "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
+                }
+                
+                btn.className = baseStyle;
+                btn.onclick = () => { activeIdx = i; renderActiveQuestion(); renderNavigationGrids(); };
+                pgGrid.appendChild(btn);
+            }
+
+            // Generate Essay Buttons (E1 to E5)
+            for (let i = 0; i < 5; i++) {
+                const idx = i + 40;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.innerText = `E${i + 1}`;
+                
+                let baseStyle = "w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center border ";
+                
+                if (idx === activeIdx) {
+                    baseStyle += "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/20";
+                } else if (essayAnswers[i + 1] && essayAnswers[i + 1].trim().length > 0) {
+                    baseStyle += "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/50 text-amber-600 dark:text-amber-400";
+                } else {
+                    baseStyle += "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
+                }
+                
+                btn.className = baseStyle;
+                btn.onclick = () => { activeIdx = idx; renderActiveQuestion(); renderNavigationGrids(); };
+                essayGrid.appendChild(btn);
+            }
+        }
+
+        // Progress Bars & Score Statistics
+        function updateProgress() {
+            let totalAnswered = 0;
+            for (let i = 1; i <= 40; i++) {
+                if (selectedAnswers[i]) totalAnswered++;
+            }
+            for (let i = 1; i <= 5; i++) {
+                if (essayAnswers[i] && essayAnswers[i].trim().length > 0) totalAnswered++;
+            }
+            
+            const percent = Math.round((totalAnswered / 45) * 100);
+            document.getElementById('progressPercent').innerText = `${percent}%`;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('scoreIndicator').innerText = `${totalAnswered}/45`;
+        }
+
+        // Rendering Active Question Panel
+        function renderActiveQuestion() {
+            const container = document.getElementById('activeQuestionContainer');
+            container.innerHTML = '';
+
+            const submitExamBtn = document.getElementById('submitExamBtn');
+            if (appMode === 'exam') {
+                submitExamBtn.classList.remove('hidden');
+            } else {
+                submitExamBtn.classList.add('hidden');
+            }
+
+            if (activeIdx < 40) {
+                // MCQ Render logic
+                const q = questions[activeIdx];
+                const answered = selectedAnswers[q.id];
+                
+                // Reading Passage Block injection if question belongs to passage
+                let passageHTML = '';
+                if (q.passageId === 1) {
+                    passageHTML = `
+                        <div class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed text-justify mb-5">
+                            <h4 class="font-extrabold text-center uppercase tracking-wide mb-3 text-slate-800 dark:text-slate-200">Read the following text to answer questions 1 to 5.</h4>
+                            <div class="text-center font-bold text-blue-600 dark:text-blue-400 mb-3 uppercase">My First Visit to a Science Museum</div>
+                            <p class="mb-2">Last school holiday, my school organized an educational trip to the National Science Museum. We arrived there at 9:00 AM after a comfortable one-hour bus journey. Everyone was excited to explore what was inside.</p>
+                            <p class="mb-2">First, we went to the space section. We saw impressive replicas of spacesuits, rockets, and planets. After that, we tried several interactive physics experiments. I personally loved the static electricity generator which made my hair stand up! Next, we had a delicious lunch at the museum cafeteria. Finally, before returning home, we watched an amazing 3D movie about marine life in the deep oceans.</p>
+                            <p>The trip was tiring, but it was extremely fun. I learned many new scientific facts and enjoyed spending time with my classmates. I really hope we can visit another museum next semester.</p>
+                        </div>
+                    `;
+                }
+
+                let optionsHTML = '';
+                for (const [key, value] of Object.entries(q.options)) {
+                    let btnStyle = "w-full p-4 rounded-xl border text-left text-sm font-semibold transition-all duration-150 flex items-center justify-between ";
+                    let iconHTML = '';
+                    
+                    if (answered === key) {
+                        if (appMode === 'practice') {
+                            if (key === q.correct) {
+                                btnStyle += "bg-emerald-50 dark:bg-emerald-950/25 border-emerald-500 text-emerald-700 dark:text-emerald-300 ring-2 ring-emerald-500/20";
+                                iconHTML = '<span class="bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow"><i class="fa-solid fa-check"></i></span>';
+                            } else {
+                                btnStyle += "bg-rose-50 dark:bg-rose-950/25 border-rose-500 text-rose-700 dark:text-rose-300 ring-2 ring-rose-500/20";
+                                iconHTML = '<span class="bg-rose-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow"><i class="fa-solid fa-xmark"></i></span>';
+                            }
+                        } else {
+                            btnStyle += "bg-blue-50 dark:bg-blue-950/25 border-blue-500 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/20";
+                            iconHTML = '<span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow"><i class="fa-solid fa-check"></i></span>';
+                        }
+                    } else {
+                        if (appMode === 'practice' && answered && key === q.correct) {
+                            btnStyle += "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-300 text-emerald-700 dark:text-emerald-400";
+                            iconHTML = '<span class="text-emerald-500 text-xs font-bold uppercase tracking-wider">Kunci</span>';
+                        } else {
+                            btnStyle += "bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700";
+                        }
+                    }
+
+                    optionsHTML += `
+                        <button onclick="selectOption('${key}')" class="${btnStyle}">
+                            <div class="flex items-center space-x-3 pr-4">
+                                <span class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0">${key}</span>
+                                <span class="text-justify leading-relaxed">${value}</span>
+                            </div>
+                            <div class="shrink-0">${iconHTML}</div>
+                        </button>
+                    `;
+                }
+
+                let explanationHTML = '';
+                if (appMode === 'practice' && answered) {
+                    explanationHTML = `
+                        <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 p-5 rounded-2xl space-y-2 mt-4">
+                            <h4 class="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center">
+                                <i class="fa-regular fa-lightbulb mr-2 text-base text-yellow-500 animate-pulse"></i> Pembahasan Analitis:
+                            </h4>
+                            <p class="text-xs sm:text-sm text-blue-800 dark:text-blue-300 leading-relaxed text-justify">${q.pembahasan}</p>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">
+                                <i class="fa-solid fa-tags mr-1.5 text-[10px]"></i> ${q.topic}
+                            </span>
+                            <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">SOAL ${q.id} DARI 40</span>
+                        </div>
+                        ${passageHTML}
+                        <h3 class="text-md sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed text-justify">${q.question}</h3>
+                        <div class="grid grid-cols-1 gap-3">
+                            ${optionsHTML}
+                        </div>
+                        ${explanationHTML}
+                    </div>
+                `;
+
+            } else {
+                // Essay Render logic
+                const essayIdx = activeIdx - 40;
+                const eq = essays[essayIdx];
+                const studentAnswer = essayAnswers[eq.id] || '';
+
+                let codeBlockHTML = '';
+                if (eq.code) {
+                    codeBlockHTML = `
+                        <div class="relative group mt-3 mb-4 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                            <div class="flex items-center justify-between px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-200 dark:border-slate-800">
+                                <span><i class="fa-solid fa-file-signature text-blue-500 mr-1.5"></i> Dialogue / Paragraph</span>
+                            </div>
+                            <pre class="bg-slate-900 p-4 text-xs font-mono text-emerald-400 overflow-x-auto"><code>${eq.code}</code></pre>
+                        </div>
+                    `;
+                }
+
+                let pembahasanHTML = '';
+                if (appMode === 'practice') {
+                    pembahasanHTML = `
+                        <div class="space-y-3">
+                            <button onclick="toggleEssayExplanation(${eq.id})" class="inline-flex items-center py-2 px-4 rounded-xl border border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20 text-xs font-bold text-amber-600 dark:text-amber-400 transition">
+                                <i class="fa-regular fa-eye mr-2"></i> Kunci Jawaban Model Guru
+                            </button>
+                            <div id="essayExp-${eq.id}" class="hidden bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 p-5 rounded-2xl">
+                                <h4 class="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-2">Jawaban Referensi Sesuai Kisi-kisi:</h4>
+                                <pre class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-sans text-justify">${eq.correctAnswer}</pre>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <div class="space-y-5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                                <i class="fa-solid fa-file-signature mr-1.5 text-[10px]"></i> Part B: Essay
+                            </span>
+                            <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">SOAL ESSAY ${eq.id} DARI 5</span>
+                        </div>
+                        <h3 class="text-md sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed text-justify">${eq.title}</h3>
+                        <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed text-justify">${eq.question}</p>
+                        ${codeBlockHTML}
+                        <p class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-2 text-justify">${eq.subQuestion}</p>
+                        
+                        <!-- Textarea Answer Editor Box -->
+                        <div class="space-y-2 mt-4">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tulis Jawabanmu:</label>
+                            <textarea id="essayInput" oninput="saveEssayAnswer(${eq.id}, this.value)" rows="6" placeholder="Ketik analisis gramatikal atau teks karanganmu di sini..." class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium transition duration-150">${studentAnswer}</textarea>
+                        </div>
+                        
+                        ${pembahasanHTML}
+                    </div>
+                `;
+            }
+        }
+
+        // Selection Event Controllers
+        function selectOption(key) {
+            const q = questions[activeIdx];
+            
+            if (appMode === 'practice' && selectedAnswers[q.id]) return;
+
+            selectedAnswers[q.id] = key;
+            saveState();
+            renderActiveQuestion();
+            renderNavigationGrids();
+            updateProgress();
+        }
+
+        function saveEssayAnswer(id, val) {
+            essayAnswers[id] = val;
+            saveState();
+            renderNavigationGrids();
+            updateProgress();
+        }
+
+        function toggleEssayExplanation(id) {
+            const exp = document.getElementById(`essayExp-${id}`);
+            exp.classList.toggle('hidden');
+        }
+
+        // Pagination Controllers
+        function navigateQuestion(step) {
+            const nextIdx = activeIdx + step;
+            if (nextIdx >= 0 && nextIdx < 45) {
+                activeIdx = nextIdx;
+                renderActiveQuestion();
+                renderNavigationGrids();
+            }
+        }
+
+        // Beautiful Dialog Boxes (No Alert Constraint)
+        function showCustomMessage(title, message) {
+            const container = document.createElement('div');
+            container.className = "fixed bottom-5 right-5 z-50 bg-slate-900 dark:bg-slate-800 border border-slate-800 text-white p-4 rounded-2xl shadow-xl flex items-center space-x-3 max-w-sm animate-slideIn";
+            container.innerHTML = `
+                <div class="bg-blue-500 text-white p-2 rounded-xl text-md flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <h5 class="text-xs font-black tracking-tight uppercase">${title}</h5>
+                    <p class="text-xs text-slate-300 font-medium">${message}</p>
+                </div>
+            `;
+            document.body.appendChild(container);
+            setTimeout(() => {
+                container.classList.add('animate-slideOut');
+                setTimeout(() => document.body.removeChild(container), 300);
+            }, 3000);
+        }
+
+        // Modal Action Controllers
+        function openResetModal() {
+            document.getElementById('resetModal').classList.remove('hidden');
+            document.getElementById('resetModal').classList.add('flex');
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.add('hidden');
+            document.getElementById('resetModal').classList.remove('flex');
+        }
+
+        function confirmReset() {
+            selectedAnswers = {};
+            essayAnswers = {};
+            saveState();
+            closeResetModal();
+            activeIdx = 0;
+            renderNavigationGrids();
+            renderActiveQuestion();
+            updateProgress();
+            showCustomMessage("Direset!", "Semua lembar isian jawaban berhasil dikosongkan.");
+        }
+
+        function openSubmitModal() {
+            let totalAnswered = 0;
+            for (let i = 1; i <= 40; i++) {
+                if (selectedAnswers[i]) totalAnswered++;
+            }
+            let essayAnswered = 0;
+            for (let i = 1; i <= 5; i++) {
+                if (essayAnswers[i] && essayAnswers[i].trim().length > 0) essayAnswered++;
+            }
+
+            document.getElementById('submitSummary').innerHTML = `
+                <div class="font-semibold text-slate-700 dark:text-slate-300">Jawaban Terisi:</div>
+                <div class="font-bold text-slate-900 dark:text-white mt-1">
+                    Multiple Choice: <span class="text-blue-600 dark:text-blue-400">${totalAnswered}/40</span><br>
+                    Essay Siswa: <span class="text-amber-600 dark:text-amber-400">${essayAnswered}/5</span>
+                </div>
+            `;
+            document.getElementById('submitModal').classList.remove('hidden');
+            document.getElementById('submitModal').classList.add('flex');
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submitModal').classList.add('hidden');
+            document.getElementById('submitModal').classList.remove('flex');
+        }
+
+        function confirmSubmit() {
+            closeSubmitModal();
+            clearInterval(examTimerInterval);
+            
+            let correctCount = 0;
+            let wrongCount = 0;
+            let unansweredCount = 0;
+
+            for (let i = 0; i < 40; i++) {
+                const ans = selectedAnswers[i + 1];
+                if (!ans) {
+                    unansweredCount++;
+                } else if (ans === questions[i].correct) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            }
+
+            renderScoreSheet(correctCount, wrongCount, unansweredCount);
+        }
+
+        // Score Sheet Renderer (Result Screen UI Design)
+        function renderScoreSheet(correct, wrong, unanswered) {
+            const workspace = document.getElementById('quizWorkspace');
+            const scorePercent = Math.round((correct / 40) * 100);
+            
+            let scoreColor = "text-emerald-500 border-emerald-500/20";
+            if (scorePercent < 70) scoreColor = "text-amber-500 border-amber-500/20";
+            if (scorePercent < 50) scoreColor = "text-rose-500 border-rose-500/20";
+
+            let reviewHTML = '';
+            for (let i = 0; i < 40; i++) {
+                const q = questions[i];
+                const ans = selectedAnswers[q.id];
+                const isCorrect = ans === q.correct;
+                
+                let cardStyle = "p-5 border rounded-2xl space-y-3 ";
+                let statusBadge = '';
+                
+                if (isCorrect) {
+                    cardStyle += "border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/30 dark:bg-emerald-950/5";
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400"><i class="fa-solid fa-circle-check mr-1.5"></i> Benar</span>';
+                } else if (!ans) {
+                    cardStyle += "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30";
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-400"><i class="fa-solid fa-circle-minus mr-1.5"></i> Kosong</span>';
+                } else {
+                    cardStyle += "border-rose-100 dark:border-rose-900/30 bg-rose-50/30 dark:bg-rose-950/5";
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-400"><i class="fa-solid fa-circle-xmark mr-1.5"></i> Salah</span>';
+                }
+
+                reviewHTML += `
+                    <div class="${cardStyle}">
+                        <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-3">
+                            <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Soal Nomor ${q.id}</span>
+                            ${statusBadge}
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-relaxed text-justify">${q.question}</h4>
+                        <div class="text-xs space-y-1.5 text-slate-600 dark:text-slate-400 font-semibold">
+                            <div>Jawaban Kamu: <span class="font-bold ${isCorrect ? 'text-emerald-600' : 'text-rose-600'}">${ans || 'Tidak diisi'}</span></div>
+                            <div>Kunci Jawaban: <span class="font-bold text-emerald-600">${q.correct}</span></div>
+                        </div>
+                        <div class="bg-blue-50/50 dark:bg-blue-950/20 p-4 rounded-xl text-xs sm:text-sm text-blue-900 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/10 leading-relaxed text-justify">
+                            <strong><i class="fa-solid fa-lightbulb mr-1 text-yellow-500"></i> Pembahasan:</strong> ${q.pembahasan}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Essay Review Section Generator
+            let essayReviewHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const eq = essays[i];
+                const studentAns = essayAnswers[eq.id] || '<i>Tidak ada jawaban yang diisi.</i>';
+                essayReviewHTML += `
+                    <div class="p-5 border border-amber-200 dark:border-amber-900/30 bg-amber-50/10 dark:bg-amber-950/5 rounded-2xl space-y-3">
+                        <h4 class="text-xs font-black text-amber-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-800 pb-2">Essay Nomor ${eq.id}</h4>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">${eq.title}</p>
+                        <div class="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap text-slate-700 dark:text-slate-300">
+                            <strong>Jawaban Kamu:</strong><br>${studentAns}
+                        </div>
+                        <div class="p-4 bg-amber-50/40 dark:bg-amber-950/10 border border-amber-200/50 dark:border-amber-900/10 rounded-xl text-xs sm:text-sm leading-relaxed whitespace-pre-wrap text-slate-700 dark:text-slate-300 text-justify">
+                            <strong>Kunci Jawaban Referensi:</strong><br>${eq.correctAnswer}
+                        </div>
+                    </div>
+                `;
+            }
+
+            workspace.innerHTML = `
+                <div class="space-y-8 animate-fadeIn">
+                    <div class="text-center space-y-4 max-w-md mx-auto">
+                        <div class="w-28 h-28 rounded-full border-4 ${scoreColor} mx-auto flex flex-col items-center justify-center shadow-lg">
+                            <span class="text-3xl font-black tracking-tight">${scorePercent}</span>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Skor Akhir</span>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Ujian Berhasil Disubmit!</h2>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Terima kasih telah berpartisipasi dalam pengerjaan simulasi ujian Asesmen Sumatif Bahasa Inggris X PG.</p>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Dashboard Grid -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 p-4 rounded-2xl text-center">
+                            <span class="block text-2xl font-black text-emerald-600 dark:text-emerald-400">${correct}</span>
+                            <span class="text-[10px] text-emerald-700 dark:text-emerald-500 font-bold uppercase tracking-wider block">Jawaban Benar</span>
+                        </div>
+                        <div class="bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/40 p-4 rounded-2xl text-center">
+                            <span class="block text-2xl font-black text-rose-600 dark:text-rose-400">${wrong}</span>
+                            <span class="text-[10px] text-rose-700 dark:text-rose-500 font-bold uppercase tracking-wider block">Jawaban Salah</span>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl text-center">
+                            <span class="block text-2xl font-black text-slate-600 dark:text-slate-400">${unanswered}</span>
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Tidak Diisi</span>
+                        </div>
+                    </div>
+
+                    <!-- Review Section Title -->
+                    <div class="border-t border-slate-200 dark:border-slate-800 pt-6 space-y-4">
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center">
+                            <i class="fa-solid fa-list-check mr-2.5 text-blue-500"></i> Analisis Koreksi & Peninjauan Lembar Soal
+                        </h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Di bawah ini adalah rincian jawaban pilihan ganda lengkap dengan ulasan argumentasi gramatikal dari kunci jawaban guru.</p>
+                        
+                        <div class="space-y-4">
+                            ${reviewHTML}
+                        </div>
+
+                        <h3 class="text-base font-extrabold text-amber-600 dark:text-amber-400 pt-6 flex items-center">
+                            <i class="fa-solid fa-file-signature mr-2.5"></i> Peninjauan Jawaban Essay
+                        </h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Bandingkan isian lembar essay buatanmu dengan model kunci jawaban yang berpatokan pada kisi-kisi.</p>
+                        
+                        <div class="space-y-4">
+                            ${essayReviewHTML}
+                        </div>
+                    </div>
+
+                    <!-- Return Button -->
+                    <div class="pt-6 text-center">
+                        <button onclick="restartCbtSession()" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-lg shadow-blue-500/20 transition">
+                            <i class="fa-solid fa-repeat mr-2"></i> Mulai Ulang Sesi Ujian / Belajar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function restartCbtSession() {
+            window.location.reload();
+        }
+    </script>
+
+</body>
+</html>

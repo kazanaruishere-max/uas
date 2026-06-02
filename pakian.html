@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studi Interaktif: Pemrograman Terstruktur X PG</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for premium look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen transition-colors duration-300">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-md shadow-blue-500/20">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-md sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">SMK Cyber Media</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Asesmen Mandiri - Pemrograman Terstruktur X PG</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Theme Toggle -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-moon text-lg block dark:hidden"></i>
+                    <i class="fa-solid fa-sun text-lg hidden dark:block"></i>
+                </button>
+                <!-- Mode Toggle -->
+                <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex items-center space-x-1">
+                    <button id="btnPracticeMode" onclick="setMode('practice')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm">
+                        <i class="fa-solid fa-book-open mr-1"></i> Belajar
+                    </button>
+                    <button id="btnExamMode" onclick="setMode('exam')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-500 dark:text-slate-400 hover:text-slate-700">
+                        <i class="fa-solid fa-clock mr-1"></i> Ujian
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Left Sidebar: Progress and Navigation Grid -->
+            <aside class="lg:col-span-1 order-2 lg:order-1">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm sticky top-24 space-y-5">
+                    
+                    <!-- Timer Widget for Exam Mode -->
+                    <div id="examTimerContainer" class="hidden bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 p-4 rounded-xl text-center">
+                        <span class="text-xs text-red-600 dark:text-red-400 font-bold uppercase tracking-wider block mb-1">Sisa Waktu Ujian</span>
+                        <span id="examTimer" class="font-mono text-2xl font-black text-red-600 dark:text-red-400">90:00</span>
+                    </div>
+
+                    <!-- Progress Statistics -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kemajuan Pengisian</span>
+                            <span id="progressPercent" class="text-xs font-bold text-blue-600 dark:text-blue-400">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                            <div id="progressBar" class="bg-blue-600 dark:bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question Navigation Grid -->
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Daftar Nomor Soal</h3>
+                        
+                        <!-- Pilihan Ganda Grid -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500">Bagian A: Pilihan Ganda</h4>
+                            <div class="grid grid-cols-5 gap-2" id="pgNavGrid">
+                                <!-- Generated Dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Essay Grid -->
+                        <div class="space-y-3 mt-4">
+                            <h4 class="text-xs font-semibold text-slate-400 dark:text-slate-500">Bagian B: Essay</h4>
+                            <div class="grid grid-cols-5 gap-2" id="essayNavGrid">
+                                <!-- Generated Dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reset and Actions -->
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col space-y-2">
+                        <button onclick="openResetModal()" class="w-full text-center py-2.5 px-4 text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition">
+                            <i class="fa-solid fa-arrow-rotate-left mr-1.5"></i> Reset Semua Jawaban
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Middle & Right Content: Active Question Workspace -->
+            <section class="lg:col-span-3 order-1 lg:order-2 space-y-6">
+                
+                <!-- Welcome/Instruction Banner -->
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-6 shadow-lg shadow-blue-500/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/30 text-white mb-1.5">
+                            <i class="fa-solid fa-bullhorn mr-1"></i> Mode Belajar Aktif
+                        </span>
+                        <h2 class="text-lg font-extrabold tracking-tight" id="bannerTitle">Selamat Datang di Studio Latihan!</h2>
+                        <p class="text-sm text-blue-100" id="bannerDesc">Klik sembarang opsi pilihan ganda untuk melihat verifikasi jawaban secara instan beserta kunci pembahasannya.</p>
+                    </div>
+                    <div id="bannerAction" class="shrink-0">
+                        <div class="bg-white/10 px-4 py-2 rounded-xl text-center border border-white/10">
+                            <span class="block text-2xl font-black tracking-tight" id="scoreIndicator">0/45</span>
+                            <span class="text-[10px] text-blue-100 font-bold uppercase tracking-wider block">Terisi</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Active Question Wrapper Card -->
+                <div id="quizWorkspace" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 relative min-h-[400px]">
+                    <!-- Question Card Container (Generated Dynamically) -->
+                    <div id="activeQuestionContainer" class="space-y-6">
+                        <!-- Dynamic Content Goes Here -->
+                    </div>
+
+                    <!-- Navigation Action Buttons -->
+                    <div class="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800">
+                        <button id="prevBtn" onclick="navigateQuestion(-1)" class="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-bold text-slate-600 dark:text-slate-300 transition flex items-center">
+                            <i class="fa-solid fa-chevron-left mr-2"></i> Sebelumnya
+                        </button>
+                        <button id="submitExamBtn" onclick="openSubmitModal()" class="hidden px-6 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-sm font-bold shadow-lg shadow-green-500/20 transition">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Selesaikan Ujian
+                        </button>
+                        <button id="nextBtn" onclick="navigateQuestion(1)" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-lg shadow-blue-500/20 transition flex items-center">
+                            Selanjutnya <i class="fa-solid fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeResetModal()"></div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl max-w-sm w-full relative z-10 space-y-4">
+            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="text-center space-y-1">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Reset Semua Jawaban?</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Tindakan ini akan mengosongkan seluruh lembar isian PG dan essay yang sudah kamu kerjakan dari memori.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="closeResetModal()" class="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Batal</button>
+                <button onclick="confirmReset()" class="w-full py-2 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-lg shadow-red-500/20 transition">Ya, Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Submit Confirmation Modal -->
+    <div id="submitModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeSubmitModal()"></div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xl max-w-sm w-full relative z-10 space-y-4">
+            <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl mx-auto">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <div class="text-center space-y-1">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Selesaikan Ujian?</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Pastikan seluruh lembar jawaban pilihan ganda dan essay sudah terisi dengan benar sebelum menyelesaikan.</p>
+            </div>
+            <div id="submitSummary" class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl text-center text-xs space-y-1">
+                <!-- Will be filled in by JS -->
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="closeSubmitModal()" class="w-full py-2 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Kembali</button>
+                <button onclick="confirmSubmit()" class="w-full py-2 px-4 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-bold shadow-lg shadow-green-500/20 transition">Kirim Ujian</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic and Data Banks -->
+    <script>
+        // Database of 40 Multiple Choice Questions (faithful to the PDF syllabus/kisi-kisi)
+        const questions = [
+            {
+                id: 1,
+                topic: "Sejarah Python / Mengenal Python",
+                question: "Siapakah tokoh yang pertama kali menciptakan dan mengembangkan bahasa pemrograman Python?",
+                options: {
+                    A: "James Gosling",
+                    B: "Guido van Rossum",
+                    C: "Dennis Ritchie",
+                    D: "Bjarne Stroustrup"
+                },
+                correct: "B",
+                pembahasan: "Python diciptakan oleh Guido van Rossum di Centrum Wiskunde & Informatica (CWI) Belanda dan pertama kali dirilis secara resmi pada tahun 1991."
+            },
+            {
+                id: 2,
+                topic: "Aturan Penamaan Variabel",
+                question: "Manakah di bawah ini penulisan nama variabel yang valid dan diperbolehkan dalam bahasa pemrograman Python?",
+                options: {
+                    A: "2_nama_siswa",
+                    B: "nama-siswa",
+                    C: "nama_siswa",
+                    D: "nama siswa"
+                },
+                correct: "C",
+                pembahasan: "Aturan penamaan variabel Python: tidak boleh diawali angka, tidak boleh mengandung karakter khusus/simbol hubung (-), tidak boleh ada spasi kosong. Hanya huruf, angka (di tengah/belakang), dan underscore (_) yang diperbolehkan."
+            },
+            {
+                id: 3,
+                topic: "Tipe Data String & Operasi",
+                question: "Perhatikan kode Python berikut:",
+                code: `a = "SMK"
+b = "Cyber"
+print(a + b)`,
+                subQuestion: "Apakah output dari kode di atas?",
+                options: {
+                    A: "SMK Cyber",
+                    B: "SMKCyber",
+                    C: "SMK, Cyber",
+                    D: "Error"
+                },
+                correct: "B",
+                pembahasan: "Operasi operator '+' pada dua tipe data string (string concatenation) akan menggabungkan kedua string tersebut langsung tanpa menyisipkan spasi otomatis."
+            },
+            {
+                id: 4,
+                topic: "Tipe Data Integer",
+                question: "Jika diberikan variabel x = 2026, fungsi bawaan Python manakah yang digunakan untuk menampilkan tipe data variabel tersebut agar menghasilkan keluaran <class 'int'>?",
+                options: {
+                    A: "print(x)",
+                    B: "input(x)",
+                    C: "type(x)",
+                    D: "len(x)"
+                },
+                correct: "C",
+                pembahasan: "Fungsi bawaan type() digunakan untuk mendeteksi sekaligus mengembalikan status tipe data dari nilai yang disimpan di dalam suatu variabel."
+            },
+            {
+                id: 5,
+                topic: "Komentar",
+                question: "Simbol apakah yang digunakan untuk menuliskan komentar satu baris (single-line comment) pada pemrograman Python?",
+                options: {
+                    A: "//",
+                    B: "/*",
+                    C: "#",
+                    D: "--"
+                },
+                correct: "C",
+                pembahasan: "Tanda pagar (#) digunakan sebagai penanda bahwa kalimat di baris tersebut merupakan komentar dan diabaikan oleh juru bahasa (interpreter) Python."
+            },
+            {
+                id: 6,
+                topic: "Fungsi input()",
+                question: "Secara default, fungsi bawaan input() dalam Python digunakan untuk...",
+                options: {
+                    A: "Menampilkan teks keluaran ke terminal program",
+                    B: "Mengubah tipe data angka menjadi sebuah teks string",
+                    C: "Menerima data masukan dari user dalam bentuk string",
+                    D: "Menghentikan jalannya program secara terpaksa"
+                },
+                correct: "C",
+                pembahasan: "Fungsi input() bertugas menangkap pengetikan keyboard pengguna dan menyimpannya ke memori dalam format tipe data string (tekstual)."
+            },
+            {
+                id: 7,
+                topic: "if-else",
+                question: "Perhatikan kode program berikut:",
+                code: `nilai = 70
+if nilai >= 75:
+    print("Lulus")
+else:
+    print("Remedial")`,
+                subQuestion: "Apakah hasil yang akan dicetak oleh potongan kode tersebut?",
+                options: {
+                    A: "Lulus",
+                    B: "Remedial",
+                    C: "Lulus Remedial",
+                    D: "Tidak menampilkan apa-apa"
+                },
+                correct: "B",
+                pembahasan: "Karena nilai = 70 tidak memenuhi syarat kondisi pertama 'nilai >= 75' (bernilai False), maka program otomatis melompat dan mengeksekusi blok 'else' yang mencetak 'Remedial'."
+            },
+            {
+                id: 8,
+                topic: "if-elif-else",
+                question: "Perhatikan potongan kode pengkondisian yang belum lengkap di bawah ini:",
+                code: `skor = 85
+if skor >= 90:
+    print("A")
+____ skor >= 80:  # Bagian rumpang
+    print("B")
+else:
+    print("C")`,
+                subQuestion: "Sintaks yang paling tepat untuk melengkapi bagian rumpang di atas adalah...",
+                options: {
+                    A: "else if",
+                    B: "elif",
+                    C: "if",
+                    D: "otherwise"
+                },
+                correct: "B",
+                pembahasan: "Python menggunakan singkatan 'elif' sebagai alternatif penulisan percabangan bersarang 'else if' yang dianut bahasa pemrograman lain."
+            },
+            {
+                id: 9,
+                topic: "Operator Logika",
+                question: "Operator logika yang akan menghasilkan nilai kebenaran True hanya jika kedua kondisi/ekspresi yang diperiksa bernilai True adalah...",
+                options: {
+                    A: "and",
+                    B: "or",
+                    C: "not",
+                    D: "xor"
+                },
+                correct: "A",
+                pembahasan: "Operator logika 'and' mensyaratkan kedua belah pihak pembanding bernilai True agar total kebenaran akhirnya bernilai True."
+            },
+            {
+                id: 10,
+                topic: "for + range()",
+                question: "Perhatikan kode perulangan di bawah ini:",
+                code: `for i in range(5):
+    print("Belajar Python")`,
+                subQuestion: "Berapakah jumlah iterasi teks 'Belajar Python' yang akan dicetak ke layar?",
+                options: {
+                    A: "4 kali",
+                    B: "5 kali",
+                    C: "6 kali",
+                    D: "Tidak terbatas"
+                },
+                correct: "B",
+                pembahasan: "range(5) akan memproduksi deret iterasi bernilai indeks 0, 1, 2, 3, dan 4. Iterasi ini bernilai total 5 putaran."
+            },
+            {
+                id: 11,
+                topic: "for vs while",
+                question: "Perbedaan mendasar yang paling tepat mengenai perulangan struktur for dan while di Python adalah...",
+                options: {
+                    A: "for hanya bisa menangani tipe data numerik, sedangkan while untuk string.",
+                    B: "for dipakai saat jumlah iterasi sudah diketahui pasti, sedangkan while terus berjalan berdasarkan pemenuhan kondisi tertentu.",
+                    C: "Perulangan while mengeksekusi baris kode jauh lebih cepat daripada perulangan for.",
+                    D: "for tidak membutuhkan kondisi berhenti, sedangkan while mutlak wajib."
+                },
+                correct: "B",
+                pembahasan: "for (counted loop) digunakan sewaktu batasan rentang data sudah fixed/jelas, sedangkan while (uncounted loop) didasarkan pada periksa dinamis nilai true/false suatu ekspresi logika."
+            },
+            {
+                id: 12,
+                topic: "while Perulangan",
+                question: "Perhatikan kode program berikut:",
+                code: `x = 1
+while x < 4:
+    print(x, end=" ")
+    x += 1`,
+                subQuestion: "Apakah output dari baris program di atas?",
+                options: {
+                    A: "1 2 3 4",
+                    B: "1 2 3",
+                    C: "2 3 4",
+                    D: "1 1 1"
+                },
+                correct: "B",
+                pembahasan: "Nilai x dicetak: 1, kemudian x+1=2 (berulang karena 2<4), cetak 2, x+1=3 (berulang karena 3<4), cetak 3, x+1=4. Karena 4 < 4 adalah False, program terhenti. Output: 1 2 3."
+            },
+            {
+                id: 13,
+                topic: "Pembuatan List",
+                question: "Manakah deklarasi di bawah ini yang valid untuk menginisialisasi sebuah objek list kosong?",
+                options: {
+                    A: "data = {}",
+                    B: "data = []",
+                    C: "data = ()",
+                    D: "data = list(\"\")"
+                },
+                correct: "B",
+                pembahasan: "List kosong di Python dideklarasikan menggunakan lambang sepasang kurung siku [] tanpa isi."
+            },
+            {
+                id: 14,
+                topic: "Indexing List",
+                question: "Diberikan variabel: buah = [\"Apel\", \"Pisang\", \"Jeruk\", \"Mangga\"]. Sintaks yang tepat untuk mengambil elemen data 'Jeruk' adalah...",
+                options: {
+                    A: "buah[1]",
+                    B: "buah[2]",
+                    C: "buah[3]",
+                    D: "buah[\"Jeruk\"]"
+                },
+                correct: "B",
+                pembahasan: "Indeks list diawali dari angka nol (0). Maka 'Apel' indeks 0, 'Pisang' indeks 1, dan 'Jeruk' indeks 2."
+            },
+            {
+                id: 15,
+                topic: "Method append()",
+                question: "Apakah kegunaan atau fungsi dari pemanggilan method .append() pada tipe data list?",
+                options: {
+                    A: "Menghapus item elemen paling akhir di dalam list",
+                    B: "Mengurutkan susunan elemen sesuai abjad atau angka numerik",
+                    C: "Menambahkan elemen data baru di posisi paling akhir objek list",
+                    D: "Mendapatkan informasi total panjang isi list"
+                },
+                correct: "C",
+                pembahasan: "Method .append() menyisipkan argumen elemen yang dimasukkan ke urutan/posisi indeks paling terakhir di list."
+            },
+            {
+                id: 16,
+                topic: "List Modifikasi Elemen",
+                question: "Perhatikan potongan baris program di bawah ini:",
+                code: `warna = ["Merah", "Hijau", "Biru"]
+warna[1] = "Kuning"
+print(warna)`,
+                subQuestion: "Apakah output dari baris kode program di atas?",
+                options: {
+                    A: "['Merah', 'Kuning', 'Biru']",
+                    B: "['Merah', 'Hijau', 'Kuning']",
+                    C: "['Kuning', 'Hijau', 'Biru']",
+                    D: "['Merah', 'Hijau', 'Biru', 'Kuning']"
+                },
+                correct: "A",
+                pembahasan: "Statemen warna[1] = 'Kuning' menimpa elemen pada indeks ke-1 ('Hijau') menjadi string 'Kuning'."
+            },
+            {
+                id: 17,
+                topic: "Pembuatan Dictionary",
+                question: "Manakah di bawah ini deklarasi struktur data dictionary yang benar dan memenuhi kaidah aturan Python?",
+                options: {
+                    A: "siswa = [\"nama\", \"Budi\"]",
+                    B: "siswa = {\"nama\", \"Budi\"}",
+                    C: "siswa = {\"nama\": \"Budi\"}",
+                    D: "siswa = (\"nama\" -> \"Budi\")"
+                },
+                correct: "C",
+                pembahasan: "Struktur data Dictionary memetakan key dan value, ditandai kurung kurawal {}, key dan value dipisah titik dua (key: value)."
+            },
+            {
+                id: 18,
+                topic: "Akses Nilai Dictionary",
+                question: "Perhatikan potongan kode pemanggilan data berikut:",
+                code: `laptop = {"merk": "Asus", "ram": "8GB", "harga": 7000000}
+print(laptop["ram"])`,
+                subQuestion: "Apakah output yang akan ditampilkan ke dalam terminal?",
+                options: {
+                    A: "merk",
+                    B: "8GB",
+                    C: "harga",
+                    D: "Asus"
+                },
+                correct: "B",
+                pembahasan: "dictionary dipanggil nilainya menggunakan key spesifik. Memanggil laptop['ram'] akan menghasilkan data value dari key tersebut yaitu '8GB'."
+            },
+            {
+                id: 19,
+                topic: "Penambahan Data Dictionary",
+                question: "Diberikan objek awal: profil = {\"nama\": \"Ali\"}. Cara yang tepat untuk mengimbuhkan pasangan data baru key 'umur' dengan nilai 16 adalah...",
+                options: {
+                    A: "profil.append({\"umur\": 16})",
+                    B: "profil[\"umur\"] = 16",
+                    C: "profil.add(\"umur\", 16)",
+                    D: "profil.insert(\"umur\", 16)"
+                },
+                correct: "B",
+                pembahasan: "Untuk menambahkan relasi key-value baru ke dictionary, cukup deklarasikan langsung menggunakan format assignment: dict[key_baru] = value_baru."
+            },
+            {
+                id: 20,
+                topic: "Nested Dictionary",
+                question: "Apakah deskripsi pengertian dari istilah teknik Nested Dictionary dalam lingkungan Python?",
+                options: {
+                    A: "Koleksi dictionary yang seluruh nilainya wajib bertipe data numerik integer.",
+                    B: "Struktur urutan list yang di dalam elemennya terisi oleh data berwujud kumpulan tuple.",
+                    C: "Kondisi struktur dictionary di mana bagian nilainya (value) menampung objek dictionary lainnya.",
+                    D: "Metode khusus untuk menghapus keberadaan dictionary dari ruang memory penyimpanan komputer."
+                },
+                correct: "C",
+                pembahasan: "Kamus bersarang (Nested Dictionary) adalah penampungan di mana nilai (value) dari suatu key merupakan dictionary lagi."
+            },
+            // Questions 21-40 from the official prompt details
+            {
+                id: 21,
+                topic: "Akses Nested Dictionary",
+                question: "Perhatikan ilustrasi kode nested dictionary berundak di bawah ini:",
+                code: `sekolah = {
+    "kelas_x": {
+        "wali": "Pak Kian",
+        "jumlah": 32
+    }
+}
+print(sekolah["kelas_x"]["wali"])`,
+                subQuestion: "Apakah data yang berhasil di-print oleh cuplikan instruksi program tersebut?",
+                options: {
+                    A: "wali",
+                    B: "kelas_x",
+                    C: "Pak Kian",
+                    D: "32"
+                },
+                correct: "C",
+                pembahasan: "Akses bertingkat: sekolah['kelas_x'] mengambil kamus dalam, lalu penunjuk ['wali'] mengekstrak nilainya yaitu 'Pak Kian'."
+            },
+            {
+                id: 22,
+                topic: "Fungsi len()",
+                question: "Perhatikan struktur list di bawah ini:",
+                code: `hobi = ["Membaca", "Menulis", "Coding", "Gaming"]
+print(len(hobi))`,
+                subQuestion: "Berapakah angka yang keluar dari hasil pemrosesan fungsi len() tersebut?",
+                options: {
+                    A: "3",
+                    B: "4",
+                    C: "5",
+                    D: "24"
+                },
+                correct: "B",
+                pembahasan: "Fungsi len() digunakan untuk memindai total kuantitas elemen/panjang item yang ada di dalam list."
+            },
+            {
+                id: 23,
+                topic: "range() dengan step",
+                question: "Perhatikan alur perulangan berparameter step berikut:",
+                code: `for angka in range(2, 9, 2):
+    print(angka, end=" ")`,
+                subQuestion: "Deret angka urutan berapakah yang akan ditampilkan ke dalam terminal?",
+                options: {
+                    A: "2 3 4 5 6 7 8 9",
+                    B: "2 4 6 8 10",
+                    C: "2 4 6 8",
+                    D: "4 6 8"
+                },
+                correct: "C",
+                pembahasan: "range(start=2, stop=9, step=2) memproses perulangan bernilai angka dari 2, ditambahkan 2 setiap iterasi, hingga sebelum 9 (yaitu: 2, 4, 6, 8)."
+            },
+            {
+                id: 24,
+                topic: "Operator Modulus (%)",
+                question: "Apakah peran atau esensi fungsional dari operator aritmatika Modulus (diwakili simbol %) di Python?",
+                options: {
+                    A: "Menentukan nilai rasio persentase dari kalkulasi angka.",
+                    B: "Melaksanakan pembagian dengan hasil bilangan bulat tanpa pecahan.",
+                    C: "Menemukan dan mengembalikan sisa dari hasil pembagian dua bilangan.",
+                    D: "Melakukan operasi pemangkatan nilai bilangan basis."
+                },
+                correct: "C",
+                pembahasan: "Operator % (modulus) memproses pembagian integer dan mengembalikan nilai sisa hasil pembagian."
+            },
+            {
+                id: 25,
+                topic: "Method pop()",
+                question: "Perhatikan manipulasi elemen list berikut ini:",
+                code: `angka = [10, 20, 30]
+nilai_hapus = angka.pop()
+print(angka)`,
+                subQuestion: "Manakah isi dari objek angka setelah dilakukan instruksi operasi di atas?",
+                options: {
+                    A: "[10, 20, 30]",
+                    B: "[20, 30]",
+                    C: "[10, 20]",
+                    D: "[10, 30]"
+                },
+                correct: "C",
+                pembahasan: "Method .pop() tanpa argumen indeks secara bawaan menghapus elemen pada indeks paling terakhir (yaitu 30) dari list."
+            },
+            {
+                id: 26,
+                topic: "Nested if / Kondisi Majemuk",
+                question: "Perhatikan kode program percabangan bersarang berikut:",
+                code: `umur = 18
+sim = True
+if umur >= 17:
+    if sim == True:
+        print("Boleh Mengemudi")
+    else:
+        print("Buat SIM dulu")
+else:
+    print("Belum Cukup Umur")`,
+                subQuestion: "Apakah teks luaran yang dimunculkan oleh logika program tersebut?",
+                options: {
+                    A: "Boleh Mengemudi",
+                    B: "Buat SIM dulu",
+                    C: "Belum Cukup Umur",
+                    D: "Error Sintaksis"
+                },
+                correct: "A",
+                pembahasan: "Umur 18 melampaui 17 (True) dan sim adalah True (True), sehingga mencetak tulisan 'Boleh Mengemudi'."
+            },
+            {
+                id: 27,
+                topic: "Method clear()",
+                question: "Bagaimanakah perintah built-in method yang tepat untuk membersihkan sekaligus mengosongkan seluruh elemen di dalam objek dictionary bernama keranjang?",
+                options: {
+                    A: "keranjang.remove()",
+                    B: "keranjang.delete()",
+                    C: "keranjang.clear()",
+                    D: "keranjang.popall()"
+                },
+                correct: "C",
+                pembahasan: "Method .clear() dipanggil untuk mengosongkan data sehingga dictionary/list menjadi kosong."
+            },
+            {
+                id: 28,
+                topic: "Operator in",
+                question: "Perhatikan potongan kode pengujian keanggotaan list di bawah ini:",
+                code: `daftar_siswa = ["Rian", "Tangguh", "Kian"]
+hasil = "Tangguh" in daftar_siswa
+print(hasil)`,
+                subQuestion: "Apakah tipe nilai data yang disimpan ke dalam variabel hasil?",
+                options: {
+                    A: "Tangguh",
+                    B: "True",
+                    C: "False",
+                    D: "Error"
+                },
+                correct: "B",
+                pembahasan: "Operator keanggotaan 'in' memeriksa apakah 'Tangguh' terdapat di daftar_siswa. Karena ada, ia mengembalikan boolean True."
+            },
+            {
+                id: 29,
+                topic: "Nested if",
+                question: "Perhatikan alur keputusan terstruktur berikut ini:",
+                code: `x = 12
+if x > 10:
+    if x % 2 == 0:
+        print("A")
+    else:
+        print("B")
+else:
+    print("C")`,
+                subQuestion: "Keluaran/output manakah yang paling valid saat program dieksekusi?",
+                options: {
+                    A: "A",
+                    B: "B",
+                    C: "C",
+                    D: "Tidak menampilkan apapun"
+                },
+                correct: "A",
+                pembahasan: "12 > 10 adalah True. 12 % 2 == 0 adalah True. Sehingga program mengeksekusi print('A')."
+            },
+            {
+                id: 30,
+                topic: "Karakteristik Python",
+                question: "Manakah di bawah ini pernyataan yang paling BENAR menggambarkan sifat atau karakteristik dari bahasa pemrograman Python?",
+                options: {
+                    A: "Python mengadopsi sifat case-insensitive (mengabaikan perbedaan huruf kapital/kecil).",
+                    B: "Python mewajibkan tanda kurung kurawal {} untuk membungkus blok perulangan.",
+                    C: "Python menggunakan tingkat indentasi (jarak spasi/tab) untuk menentukan batas penulisan blok kode program.",
+                    D: "Setiap baris statemen kode Python mutlak wajib ditutup dengan tanda titik koma (;)."
+                },
+                correct: "C",
+                pembahasan: "Python mewajibkan indentasi sebagai penanda blok kode, alih-alih kurung kurawal seperti mayoritas bahasa pemrograman lainnya."
+            },
+            {
+                id: 31,
+                topic: "Iterasi Dictionary (items)",
+                question: "Untuk memproses looping guna membedah dan mengambil pasangan key sekaligus value dari suatu dictionary secara simultan, method mana yang wajib dipanggil?",
+                options: {
+                    A: "keys()",
+                    B: "values()",
+                    C: "items()",
+                    D: "get()"
+                },
+                correct: "C",
+                pembahasan: "Method .items() merubah dictionary menjadi kumpulan tuple berisi pasangan key dan value untuk diurai di perulangan."
+            },
+            {
+                id: 32,
+                topic: "Key & Value",
+                question: "Diberikan baris inisialisasi: kontak = {\"Amir\": \"08123\"}. Berdasarkan struktur anatomi data kamus, manakah pernyataan berikut yang bernilai benar?",
+                options: {
+                    A: "\"Amir\" berkedudukan sebagai value, sedangkan \"08123\" merupakan key.",
+                    B: "Komponen \"Amir\" dan \"08123\" sama-sama bertindak selaku key.",
+                    C: "\"Amir\" bertindak sebagai key identifier, sedangkan \"08123\" berposisi selaku value data.",
+                    D: "Objek tidak memiliki relasi key-value karena salah penulisan kurung siku."
+                },
+                correct: "C",
+                pembahasan: "Key diletakkan sebelum tanda titik dua (:), sedangkan nilai rujukan (value) diletakkan sesudahnya."
+            },
+            {
+                id: 33,
+                topic: "Konversi Tipe int(input())",
+                question: "Mengapa programmer sering menggunakan teknik pembungkusan fungsi berupa int(input(\"Masukkan angka: \")) dalam pemrograman Python?",
+                options: {
+                    A: "Untuk mendikte batasan jumlah digit karakter angka yang diketik oleh pengguna.",
+                    B: "Untuk mengonversi data masukan bertipe teks string hasil masukan user agar menjelma menjadi tipe bilangan bulat (integer) agar bisa dihitung.",
+                    C: "Untuk memicu sistem agar merubah corak warna tulisan teks input dalam terminal komputer.",
+                    D: "Agar aplikasi otomatis kebal dan tidak crash saat pengguna tidak sengaja menginput alfabet huruf."
+                },
+                correct: "B",
+                pembahasan: "Fungsi input() default mengembalikan tipe str. Konversi int() wajib ditambahkan apabila ingin memproses string masukan tersebut sebagai data numerik murni."
+            },
+            {
+                id: 34,
+                topic: "Fungsi Tanpa Parameter",
+                question: "Perhatikan struktur pendefinisian blok fungsi di bawah ini:",
+                code: `def sapa_cyber():
+    print("Halo SMK Cyber Media!")
+
+sapa_cyber()`,
+                subQuestion: "Apakah efek atau hasil keluaran yang didapat dari eksekusi instruksi program tersebut?",
+                options: {
+                    A: "Terjadi kendala error akibat fungsi tidak memuat variabel di dalam tanda kurung.",
+                    B: "Mencetak untaian teks kalimat 'Halo SMK Cyber Media!' ke area terminal.",
+                    C: "Menampilkan teks bertuliskan kata 'sapa_cyber' pada layar utama komputer.",
+                    D: "Aplikasi vakum dan diam karena fungsi belum diinjeksikan nilai parameter pemicu."
+                },
+                correct: "B",
+                pembahasan: "Fungsi sapa_cyber dipanggil dan langsung mengeksekusi print di dalamnya."
+            },
+            {
+                id: 35,
+                topic: "Jenis Fungsi",
+                question: "Merujuk pada model penulisan struktur kode fungsi pada soal nomor 34 di atas, fungsi sapa_cyber tersebut digolongkan ke dalam ragam jenis...",
+                options: {
+                    A: "Fungsi bawaan sistem core (Built-in Function).",
+                    B: "Fungsi rekursif berputar.",
+                    C: "Fungsi buatan pengguna tanpa parameter dan tanpa return value (User-Defined Function).",
+                    D: "Fungsi anonim berbasis ekspresi Lambda."
+                },
+                correct: "C",
+                pembahasan: "Fungsi tersebut ditulis langsung oleh programmer (User-Defined) dan tidak memuat parameter atau return value."
+            },
+            {
+                id: 36,
+                topic: "Fungsi Dengan Parameter",
+                question: "Manakah di bawah ini cetak cetakan sintaks pendeklarasian fungsi Python yang memanfaatkan parameter secara baik dan benar?",
+                options: {
+                    A: "def hitung_luas():",
+                    B: "def hitung_luas(panjang, lebar):",
+                    C: "def hitung_luas(panjang = , lebar = ):",
+                    D: "hitung_luas(panjang, lebar):"
+                },
+                correct: "B",
+                pembahasan: "Parameter diletakkan di dalam tanda kurung setelah pengidentifikasi nama fungsi dipicu instruksi 'def'."
+            },
+            {
+                id: 37,
+                topic: "Operator and",
+                question: "Berapakah nilai kebenaran akhir dari hasil evaluasi ekspresi logika gabungan berikut: (5 > 3) and (10 < 2)?",
+                options: {
+                    A: "True",
+                    B: "False",
+                    C: "None",
+                    D: "Error"
+                },
+                correct: "B",
+                pembahasan: "(5 > 3) menghasilkan True, sedangkan (10 < 2) menghasilkan False. Hubungan True and False berkesimpulan akhir False."
+            },
+            {
+                id: 38,
+                topic: "Operator or",
+                question: "Berapakah nilai kebenaran akhir dari rumusan logika kondisional berikut: (4 == 4) or (3 > 7)?",
+                options: {
+                    A: "True",
+                    B: "False",
+                    C: "4",
+                    D: "0"
+                },
+                correct: "A",
+                pembahasan: "(4 == 4) adalah True, (3 > 7) adalah False. Dengan operator 'or', jika minimal ada satu True, maka hasil akhirnya True."
+            },
+            {
+                id: 39,
+                topic: "Operator not",
+                question: "Apakah hasil mutasi logika akhir dari pernyataan kode Python berikut: not (8 != 8)?",
+                options: {
+                    A: "True",
+                    B: "False",
+                    C: "Error",
+                    D: "8"
+                },
+                correct: "A",
+                pembahasan: "(8 != 8) bernilai salah/False. Pembalikan logika via operator 'not False' memicu hasil keluaran True."
+            },
+            {
+                id: 40,
+                topic: "if dengan and",
+                question: "Perhatikan simulasi algoritma otentikasi login sederhana di bawah ini:",
+                code: `username = "admin"
+password = "123"
+
+if username == "admin" and password == "cyber":
+    print("Akses Diterima")
+else:
+    print("Akses Ditolak")`,
+                subQuestion: "Apakah teks kesimpulan akhir yang dicetak ke layar oleh program tersebut?",
+                options: {
+                    A: "Akses Diterima",
+                    B: "Akses Ditolak",
+                    C: "Error sintaks akibat kegagalan password",
+                    D: "Blank / tidak menampilkan teks apa-apa"
+                },
+                correct: "B",
+                pembahasan: "Karena password '123' tidak cocok dengan 'cyber', evaluasi logika 'and' bernilai False, sehingga mencetak 'Akses Ditolak'."
+            }
+        ];
+
+        // Database of 5 Essay Questions
+        const essays = [
+            {
+                id: 1,
+                title: "Soal Essay 1 (Variabel & Tipe Data)",
+                question: "Perhatikan baris kode Python di bawah ini yang mengalami error sewaktu ingin menjumlahkan data:",
+                code: `angka1 = input("Masukkan angka pertama: ")  # User mengetikkan angka 10
+angka2 = 5
+total = angka1 + angka2
+print("Hasil penjumlahan:", total)`,
+                subQuestion: "Analisislah mengapa kode di atas memicu kesalahan (TypeError) dan berikan baris kode perbaikan yang benar agar operasi aritmatika penjumlahan tersebut berjalan semestinya!",
+                correctAnswer: "Analisis Masalah:\nFungsi input() mengembalikan tipe data String ('str'). Sehingga 'angka1' bertipe str ('10') dan 'angka2' bertipe int (5). Di Python, menjumlahkan string dengan integer secara langsung memicu TypeError.\n\nPerbaikan Kode:\nMelakukan type-casting string ke integer menggunakan int():\nangka1 = int(input('Masukkan angka pertama: '))\nangka2 = 5\ntotal = angka1 + angka2\nprint('Hasil penjumlahan:', total)"
+            },
+            {
+                id: 2,
+                title: "Soal Essay 2 (Percabangan)",
+                question: "Seorang siswa membuat program konversi nilai angka menjadi nilai huruf dengan aturan: Nilai >= 90 mendapat 'A', Nilai >= 70 mendapat 'B', dan di bawah itu mendapat 'C'. Namun, siswa tersebut menulis kodenya dengan susunan urutan sebagai berikut:",
+                code: `nilai = 95
+if nilai >= 70:
+    print("B")
+elif nilai >= 90:
+    print("A")
+else:
+    print("C")`,
+                subQuestion: "Ketika dijalankan, program justru mencetak huruf 'B' ke terminal, padahal seharusnya siswa dengan nilai 95 berhak mendapatkan huruf 'A'. Analisislah penyebab kesalahan logika urutan percabangan tersebut dan tuliskan struktur susunan kode perbaikan yang benar!",
+                correctAnswer: "Analisis Masalah:\nPython mengecek kondisi if-elif dari atas ke bawah. Karena 95 sudah memenuhi kondisi pertama (nilai >= 70), maka blok if tersebut langsung dieksekusi (print 'B') dan program mengabaikan elif di bawahnya.\n\nPerbaikan Kode:\nSusun kondisi dari yang terkecil/paling spesifik terlebih dahulu:\nif nilai >= 90:\n    print('A')\nelif nilai >= 70:\n    print('B')\nelse:\n    print('C')"
+            },
+            {
+                id: 3,
+                title: "Soal Essay 3 (Perulangan)",
+                question: "Perhatikan struktur kode algoritma perulangan while di bawah ini:",
+                code: `i = 1
+while i <= 5:
+    print("Nomor:", i)`,
+                subQuestion: "Apabila instruksi program di atas dijalankan di komputer, akan mengakibatkan terjadinya fenomena ketahanan error mendapat sebutan Infinite Loop. Jelaskan mengapa fenomena tersebut dapat terjadi dan lampirkan kode hasil modifikasi perbaikan agar sistem perulangan dapat berhenti normal secara presisi setelah mencetak angka 5!",
+                correctAnswer: "Analisis Masalah:\nInfinite loop terjadi karena variabel counter 'i' tidak pernah dimodifikasi (di-increment) di dalam badan while. Walhasil, nilai i akan selamanya 1 dan kondisi 'i <= 5' akan selalu bernilai True.\n\nPerbaikan Kode:\nTambahkan increment 'i += 1' di dalam perulangan:\ni = 1\nwhile i <= 5:\n    print('Nomor:', i)\n    i += 1"
+            },
+            {
+                id: 4,
+                title: "Soal Essay 4 (Dictionary)",
+                question: "Diketahui struktur objek kamus awal adalah sebagai berikut: produk = {\"nama\": \"Buku Tulis\", \"stok\": 20}.",
+                subQuestion: "Tuliskan baris perintah Python yang valid untuk melaksanakan skenario:\n1. Mengubah (update) nilai elemen pada kata kunci 'stok' dari nilai lama menjadi nilai baru berangka 35.\n2. Menyisipkan (insert) pasangan data baru berupa key 'harga' dengan kuantitas nilai integer sebesar 5000.\nSetelah memaparkan kode, jelaskan pula minimal satu argumen kelebihan utama penggunaan tipe data Dictionary dibandingkan ragam tipe data List dalam memetakan data rekam entitas objek!",
+                correctAnswer: "Kode Manipulasi:\nproduk['stok'] = 35\nproduk['harga'] = 5000\n\nKelebihan Dictionary:\nDictionary menggunakan Key deskriptif alih-alih indeks numerik. Hal ini memudahkan pemanggilan data kompleks (misal mengambil 'stok' secara langsung daripada harus menebak indeks list ke berapa) dan membuat struktur kode lebih mudah dipahami (readable)."
+            },
+            {
+                id: 5,
+                title: "Soal Essay 5 (Nested Dictionary)",
+                question: "Rancanglah sebuah script program Python utuh yang mengimplementasikan konsep struktur data Nested Dictionary untuk menyimpan minimal 3 data siswa di lingkungan SMK Cyber Media. Di mana setiap elemen entitas siswa wajib membawa informasi sub-properti berupa: nama dan kelas.",
+                subQuestion: "Selanjutnya, kombinasikan rancangan tersebut dengan memanfaatkan struktur kontrol perulangan for agar mampu mendepak dan menyajikan keseluruhan data siswa ke layar terminal secara terstruktur dan rapi!",
+                correctAnswer: "Contoh Kode Python:\ndata_siswa = {\n    'siswa1': {'nama': 'Budi', 'kelas': 'X PG'},\n    'siswa2': {'nama': 'Rian', 'kelas': 'X PG'},\n    'siswa3': {'nama': 'Kian', 'kelas': 'X PG'}\n}\n\nfor id_siswa, info in data_siswa.items():\n    print(f'ID: {id_siswa}')\n    print(f'Nama : {info[\"nama\"]}')\n    print(f'Kelas: {info[\"kelas\"]}')\n    print('-' * 20)"
+            }
+        ];
+
+        // App State Management
+        let appMode = 'practice'; // 'practice' or 'exam'
+        let activeIdx = 0; // 0 to 44 (0-39 are MCQs, 40-44 are Essays)
+        let selectedAnswers = {}; // {questionId: 'A'/'B'/'C'/'D'}
+        let essayAnswers = {}; // {essayId: "student's input text"}
+        let examTimerInterval = null;
+        let examTimeLeft = 90 * 60; // 90 minutes in seconds
+
+        // Load data from localStorage if exists
+        function loadState() {
+            const savedAnswers = localStorage.getItem('selectedAnswers');
+            const savedEssayAnswers = localStorage.getItem('savedEssayAnswers');
+            if (savedAnswers) selectedAnswers = JSON.parse(savedAnswers);
+            if (savedEssayAnswers) essayAnswers = JSON.parse(savedEssayAnswers);
+        }
+
+        function saveState() {
+            localStorage.setItem('selectedAnswers', JSON.stringify(selectedAnswers));
+            localStorage.setItem('savedEssayAnswers', JSON.stringify(essayAnswers));
+        }
+
+        // Initialize App
+        window.onload = function() {
+            loadTheme();
+            loadState();
+            renderNavigationGrids();
+            renderActiveQuestion();
+            updateProgress();
+        };
+
+        // Dark Mode Logic
+        function loadTheme() {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Mode Toggler
+        function setMode(mode) {
+            appMode = mode;
+            const btnPractice = document.getElementById('btnPracticeMode');
+            const btnExam = document.getElementById('btnExamMode');
+            const timerContainer = document.getElementById('examTimerContainer');
+            
+            // UI Button Switch Design
+            if (mode === 'practice') {
+                btnPractice.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm";
+                btnExam.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                timerContainer.classList.add('hidden');
+                
+                document.getElementById('bannerTitle').innerText = "Selamat Datang di Studio Latihan!";
+                document.getElementById('bannerDesc').innerText = "Klik sembarang opsi pilihan ganda untuk melihat verifikasi jawaban secara instan beserta kunci pembahasannya.";
+                
+                // Stop exam timer
+                clearInterval(examTimerInterval);
+            } else {
+                btnExam.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-700 text-blue-600 dark:text-white shadow-sm";
+                btnPractice.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                timerContainer.classList.remove('hidden');
+                
+                document.getElementById('bannerTitle').innerText = "Mode Ujian CBT Diaktifkan!";
+                document.getElementById('bannerDesc').innerText = "Kerjakan seluruh soal dengan fokus. Hasil skor, persentase, kunci jawaban, dan pembahasan akan dirilis setelah ujian dikirim.";
+                
+                // Start Exam Timer
+                startExamTimer();
+            }
+            renderActiveQuestion();
+            renderNavigationGrids();
+        }
+
+        // CBT Timer Controller
+        function startExamTimer() {
+            clearInterval(examTimerInterval);
+            examTimeLeft = 90 * 60; // Reset to 90 mins
+            updateTimerDisplay();
+            
+            examTimerInterval = setInterval(() => {
+                examTimeLeft--;
+                if (examTimeLeft <= 0) {
+                    clearInterval(examTimerInterval);
+                    autoSubmitExam();
+                } else {
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(examTimeLeft / 60);
+            const seconds = examTimeLeft % 60;
+            document.getElementById('examTimer').innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function autoSubmitExam() {
+            // Force submission
+            confirmSubmit();
+            // Custom dialog
+            showCustomMessage("Waktu Habis", "Waktu pengerjaan ujian kamu telah habis. Ujian berhasil dikirim secara otomatis.");
+        }
+
+        // Navigation Grid Renderers
+        function renderNavigationGrids() {
+            const pgGrid = document.getElementById('pgNavGrid');
+            const essayGrid = document.getElementById('essayNavGrid');
+            
+            pgGrid.innerHTML = '';
+            essayGrid.innerHTML = '';
+
+            // Generate MCQs Buttons (1 to 40)
+            for (let i = 0; i < 40; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.innerText = i + 1;
+                
+                // Styling based on state
+                let baseStyle = "w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center border ";
+                
+                if (i === activeIdx) {
+                    baseStyle += "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/20";
+                } else if (selectedAnswers[i + 1]) {
+                    if (appMode === 'practice') {
+                        // In practice mode, color green if correct, red if wrong
+                        if (selectedAnswers[i + 1] === questions[i].correct) {
+                            baseStyle += "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-400";
+                        } else {
+                            baseStyle += "bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400";
+                        }
+                    } else {
+                        // In exam mode, simply blue outline indicating "answered"
+                        baseStyle += "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/50 text-blue-600 dark:text-blue-400";
+                    }
+                } else {
+                    baseStyle += "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
+                }
+                
+                btn.className = baseStyle;
+                btn.onclick = () => { activeIdx = i; renderActiveQuestion(); renderNavigationGrids(); };
+                pgGrid.appendChild(btn);
+            }
+
+            // Generate Essay Buttons (E1 to E5)
+            for (let i = 0; i < 5; i++) {
+                const idx = i + 40;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.innerText = `E${i + 1}`;
+                
+                let baseStyle = "w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center border ";
+                
+                if (idx === activeIdx) {
+                    baseStyle += "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/20";
+                } else if (essayAnswers[i + 1] && essayAnswers[i + 1].trim().length > 0) {
+                    baseStyle += "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/50 text-amber-600 dark:text-amber-400";
+                } else {
+                    baseStyle += "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
+                }
+                
+                btn.className = baseStyle;
+                btn.onclick = () => { activeIdx = idx; renderActiveQuestion(); renderNavigationGrids(); };
+                essayGrid.appendChild(btn);
+            }
+        }
+
+        // Progress Bars & Score Statistics
+        function updateProgress() {
+            let totalAnswered = 0;
+            for (let i = 1; i <= 40; i++) {
+                if (selectedAnswers[i]) totalAnswered++;
+            }
+            for (let i = 1; i <= 5; i++) {
+                if (essayAnswers[i] && essayAnswers[i].trim().length > 0) totalAnswered++;
+            }
+            
+            const percent = Math.round((totalAnswered / 45) * 100);
+            document.getElementById('progressPercent').innerText = `${percent}%`;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('scoreIndicator').innerText = `${totalAnswered}/45`;
+        }
+
+        // Rendering Active Question Panel
+        function renderActiveQuestion() {
+            const container = document.getElementById('activeQuestionContainer');
+            container.innerHTML = '';
+
+            // Handle Show/Hide submission button
+            const submitExamBtn = document.getElementById('submitExamBtn');
+            if (appMode === 'exam') {
+                submitExamBtn.classList.remove('hidden');
+            } else {
+                submitExamBtn.classList.add('hidden');
+            }
+
+            // Decide if we render MCQ (0-39) or Essay (40-44)
+            if (activeIdx < 40) {
+                // MCQ Render logic
+                const q = questions[activeIdx];
+                const answered = selectedAnswers[q.id];
+                
+                let codeBlockHTML = '';
+                if (q.code) {
+                    codeBlockHTML = `
+                        <div class="relative group mt-3 mb-4 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                            <div class="flex items-center justify-between px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-200 dark:border-slate-800">
+                                <span><i class="fa-brands fa-python text-blue-500 mr-1.5"></i> python</span>
+                                <button onclick="copyToClipboard(\`\${q.code.replace(/\`/g, '\\\`')}\`)" class="hover:text-blue-500 transition duration-150">
+                                    <i class="fa-regular fa-copy mr-1"></i> Copy
+                                </button>
+                            </div>
+                            <pre class="bg-slate-900 p-4 text-xs font-mono text-emerald-400 overflow-x-auto"><code>${q.code}</code></pre>
+                        </div>
+                    `;
+                }
+
+                let optionsHTML = '';
+                for (const [key, value] of Object.entries(q.options)) {
+                    let btnStyle = "w-full p-4 rounded-xl border text-left text-sm font-semibold transition-all duration-150 flex items-center justify-between ";
+                    let iconHTML = '';
+                    
+                    if (answered === key) {
+                        if (appMode === 'practice') {
+                            if (key === q.correct) {
+                                btnStyle += "bg-emerald-50 dark:bg-emerald-950/25 border-emerald-500 text-emerald-700 dark:text-emerald-300 ring-2 ring-emerald-500/20";
+                                iconHTML = '<span class="bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow"><i class="fa-solid fa-check"></i></span>';
+                            } else {
+                                btnStyle += "bg-rose-50 dark:bg-rose-950/25 border-rose-500 text-rose-700 dark:text-rose-300 ring-2 ring-rose-500/20";
+                                iconHTML = '<span class="bg-rose-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow"><i class="fa-solid fa-xmark"></i></span>';
+                            }
+                        } else {
+                            // CBT Exam Mode selected option
+                            btnStyle += "bg-blue-50 dark:bg-blue-950/25 border-blue-500 text-blue-700 dark:text-blue-300 ring-2 ring-blue-500/20";
+                            iconHTML = '<span class="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow"><i class="fa-solid fa-check"></i></span>';
+                        }
+                    } else {
+                        // Unselected Options
+                        if (appMode === 'practice' && answered && key === q.correct) {
+                            // Highlight the correct answer even if not selected in Practice mode
+                            btnStyle += "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-300 text-emerald-700 dark:text-emerald-400";
+                            iconHTML = '<span class="text-emerald-500 text-xs font-bold uppercase tracking-wider">Kunci</span>';
+                        } else {
+                            btnStyle += "bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-slate-300";
+                        }
+                    }
+
+                    optionsHTML += `
+                        <button onclick="selectOption('${key}')" class="${btnStyle}">
+                            <div class="flex items-center space-x-3 pr-4">
+                                <span class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0">${key}</span>
+                                <span class="text-justify leading-relaxed">${value}</span>
+                            </div>
+                            <div class="shrink-0">${iconHTML}</div>
+                        </button>
+                    `;
+                }
+
+                // Append explanation box if answered in Practice Mode
+                let explanationHTML = '';
+                if (appMode === 'practice' && answered) {
+                    explanationHTML = `
+                        <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 p-5 rounded-2xl space-y-2 mt-4 animate-fadeIn">
+                            <h4 class="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center">
+                                <i class="fa-regular fa-lightbulb mr-2 text-base text-yellow-500 animate-pulse"></i> Pembahasan Analitis:
+                            </h4>
+                            <p class="text-xs sm:text-sm text-blue-800 dark:text-blue-300 leading-relaxed text-justify">${q.pembahasan}</p>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">
+                                <i class="fa-solid fa-tags mr-1.5 text-[10px]"></i> ${q.topic}
+                            </span>
+                            <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">SOAL ${q.id} DARI 40</span>
+                        </div>
+                        <h3 class="text-md sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed text-justify">${q.question}</h3>
+                        ${codeBlockHTML}
+                        ${q.subQuestion ? `<p class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">${q.subQuestion}</p>` : ''}
+                        <div class="grid grid-cols-1 gap-3">
+                            ${optionsHTML}
+                        </div>
+                        ${explanationHTML}
+                    </div>
+                `;
+
+            } else {
+                // Essay Render logic
+                const essayIdx = activeIdx - 40;
+                const eq = essays[essayIdx];
+                const studentAnswer = essayAnswers[eq.id] || '';
+
+                let codeBlockHTML = '';
+                if (eq.code) {
+                    codeBlockHTML = `
+                        <div class="relative group mt-3 mb-4 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+                            <div class="flex items-center justify-between px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs border-b border-slate-200 dark:border-slate-800">
+                                <span><i class="fa-brands fa-python text-blue-500 mr-1.5"></i> python</span>
+                                <button onclick="copyToClipboard(\`\${eq.code.replace(/\`/g, '\\\`')}\`)" class="hover:text-blue-500 transition duration-150">
+                                    <i class="fa-regular fa-copy mr-1"></i> Copy
+                                </button>
+                            </div>
+                            <pre class="bg-slate-900 p-4 text-xs font-mono text-emerald-400 overflow-x-auto"><code>${eq.code}</code></pre>
+                        </div>
+                    `;
+                }
+
+                let pembahasanHTML = '';
+                if (appMode === 'practice') {
+                    pembahasanHTML = `
+                        <div class="space-y-3">
+                            <button onclick="toggleEssayExplanation(${eq.id})" class="inline-flex items-center py-2 px-4 rounded-xl border border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/20 text-xs font-bold text-amber-600 dark:text-amber-400 transition">
+                                <i class="fa-regular fa-eye mr-2"></i> Kunci Jawaban Model Guru
+                            </button>
+                            <div id="essayExp-${eq.id}" class="hidden bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 p-5 rounded-2xl animate-fadeIn">
+                                <h4 class="text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-2">Jawaban Referensi Sesuai Kisi-kisi:</h4>
+                                <pre class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-sans text-justify">${eq.correctAnswer}</pre>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <div class="space-y-5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
+                                <i class="fa-solid fa-file-signature mr-1.5 text-[10px]"></i> Bagian B: Essay
+                            </span>
+                            <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">SOAL ESSAY ${eq.id} DARI 5</span>
+                        </div>
+                        <h3 class="text-md sm:text-lg font-bold text-slate-900 dark:text-white leading-relaxed text-justify">${eq.title}</h3>
+                        <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed text-justify">${eq.question}</p>
+                        ${codeBlockHTML}
+                        <p class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-2 text-justify">${eq.subQuestion}</p>
+                        
+                        <!-- Textarea Answer Editor Box -->
+                        <div class="space-y-2 mt-4">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tulis Jawabanmu:</label>
+                            <textarea id="essayInput" oninput="saveEssayAnswer(${eq.id}, this.value)" rows="6" placeholder="Ketikkan analisis masalah dan kode perbaikan di sini..." class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium transition duration-150">${studentAnswer}</textarea>
+                        </div>
+                        
+                        ${pembahasanHTML}
+                    </div>
+                `;
+            }
+        }
+
+        // Selection Event Controllers
+        function selectOption(key) {
+            const q = questions[activeIdx];
+            
+            // Practice mode locks option after selecting, Exam mode allows changing
+            if (appMode === 'practice' && selectedAnswers[q.id]) return;
+
+            selectedAnswers[q.id] = key;
+            saveState();
+            renderActiveQuestion();
+            renderNavigationGrids();
+            updateProgress();
+        }
+
+        function saveEssayAnswer(id, val) {
+            essayAnswers[id] = val;
+            saveState();
+            renderNavigationGrids();
+            updateProgress();
+        }
+
+        function toggleEssayExplanation(id) {
+            const exp = document.getElementById(`essayExp-${id}`);
+            exp.classList.toggle('hidden');
+        }
+
+        // Pagination Controllers
+        function navigateQuestion(step) {
+            const nextIdx = activeIdx + step;
+            if (nextIdx >= 0 && nextIdx < 45) {
+                activeIdx = nextIdx;
+                renderActiveQuestion();
+                renderNavigationGrids();
+            }
+        }
+
+        // Clipboard Copy Action Support
+        function copyToClipboard(text) {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            
+            showCustomMessage("Disalin!", "Kode program berhasil disalin ke clipboard.");
+        }
+
+        // Beautiful Dialog Boxes (No Alert Constraint)
+        function showCustomMessage(title, message) {
+            const container = document.createElement('div');
+            container.className = "fixed bottom-5 right-5 z-50 bg-slate-900 dark:bg-slate-800 border border-slate-800 text-white p-4 rounded-2xl shadow-xl flex items-center space-x-3 max-w-sm animate-slideIn";
+            container.innerHTML = `
+                <div class="bg-blue-500 text-white p-2 rounded-xl text-md flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div>
+                    <h5 class="text-xs font-black tracking-tight uppercase">${title}</h5>
+                    <p class="text-xs text-slate-300 font-medium">${message}</p>
+                </div>
+            `;
+            document.body.appendChild(container);
+            setTimeout(() => {
+                container.classList.add('animate-slideOut');
+                setTimeout(() => document.body.removeChild(container), 300);
+            }, 3000);
+        }
+
+        // Modal Action Controllers
+        function openResetModal() {
+            document.getElementById('resetModal').classList.remove('hidden');
+            document.getElementById('resetModal').classList.add('flex');
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetModal').classList.add('hidden');
+            document.getElementById('resetModal').classList.remove('flex');
+        }
+
+        function confirmReset() {
+            selectedAnswers = {};
+            essayAnswers = {};
+            saveState();
+            closeResetModal();
+            activeIdx = 0;
+            renderNavigationGrids();
+            renderActiveQuestion();
+            updateProgress();
+            showCustomMessage("Direset!", "Semua lembar isian jawaban berhasil dikosongkan.");
+        }
+
+        function openSubmitModal() {
+            let totalAnswered = 0;
+            for (let i = 1; i <= 40; i++) {
+                if (selectedAnswers[i]) totalAnswered++;
+            }
+            let essayAnswered = 0;
+            for (let i = 1; i <= 5; i++) {
+                if (essayAnswers[i] && essayAnswers[i].trim().length > 0) essayAnswered++;
+            }
+
+            document.getElementById('submitSummary').innerHTML = `
+                <div class="font-semibold text-slate-700 dark:text-slate-300">Jawaban Terisi:</div>
+                <div class="font-bold text-slate-900 dark:text-white mt-1">
+                    Pilihan Ganda: <span class="text-blue-600 dark:text-blue-400">${totalAnswered}/40</span><br>
+                    Essay Siswa: <span class="text-amber-600 dark:text-amber-400">${essayAnswered}/5</span>
+                </div>
+            `;
+            document.getElementById('submitModal').classList.remove('hidden');
+            document.getElementById('submitModal').classList.add('flex');
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submitModal').classList.add('hidden');
+            document.getElementById('submitModal').classList.remove('flex');
+        }
+
+        function confirmSubmit() {
+            closeSubmitModal();
+            clearInterval(examTimerInterval);
+            
+            // Calculate Scores and Redirect to Results Page
+            let correctCount = 0;
+            let wrongCount = 0;
+            let unansweredCount = 0;
+
+            for (let i = 0; i < 40; i++) {
+                const ans = selectedAnswers[i + 1];
+                if (!ans) {
+                    unansweredCount++;
+                } else if (ans === questions[i].correct) {
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+            }
+
+            renderScoreSheet(correctCount, wrongCount, unansweredCount);
+        }
+
+        // Score Sheet Renderer (Result Screen UI Design)
+        function renderScoreSheet(correct, wrong, unanswered) {
+            const workspace = document.getElementById('quizWorkspace');
+            const scorePercent = Math.round((correct / 40) * 100);
+            
+            // Style score colors dynamically
+            let scoreColor = "text-emerald-500 border-emerald-500/20";
+            if (scorePercent < 70) scoreColor = "text-amber-500 border-amber-500/20";
+            if (scorePercent < 50) scoreColor = "text-rose-500 border-rose-500/20";
+
+            // Generate detailed question review logs
+            let reviewHTML = '';
+            for (let i = 0; i < 40; i++) {
+                const q = questions[i];
+                const ans = selectedAnswers[q.id];
+                const isCorrect = ans === q.correct;
+                
+                let cardStyle = "p-5 border rounded-2xl space-y-3 ";
+                let statusBadge = '';
+                
+                if (isCorrect) {
+                    cardStyle += "border-emerald-100 dark:border-emerald-900/30 bg-emerald-50/30 dark:bg-emerald-950/5";
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400"><i class="fa-solid fa-circle-check mr-1.5"></i> Benar</span>';
+                } else if (!ans) {
+                    cardStyle += "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30";
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-400"><i class="fa-solid fa-circle-minus mr-1.5"></i> Kosong</span>';
+                } else {
+                    cardStyle += "border-rose-100 dark:border-rose-900/30 bg-rose-50/30 dark:bg-rose-950/5";
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-400"><i class="fa-solid fa-circle-xmark mr-1.5"></i> Salah</span>';
+                }
+
+                reviewHTML += `
+                    <div class="${cardStyle}">
+                        <div class="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/80 pb-3">
+                            <span class="text-xs font-black text-slate-400 uppercase tracking-wider">Soal Nomor ${q.id}</span>
+                            ${statusBadge}
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-relaxed text-justify">${q.question}</h4>
+                        <div class="text-xs space-y-1.5 text-slate-600 dark:text-slate-400 font-semibold">
+                            <div>Jawaban Kamu: <span class="font-bold ${isCorrect ? 'text-emerald-600' : 'text-rose-600'}">${ans || 'Tidak diisi'}</span></div>
+                            <div>Kunci Jawaban: <span class="font-bold text-emerald-600">${q.correct}</span></div>
+                        </div>
+                        <div class="bg-blue-50/50 dark:bg-blue-950/20 p-4 rounded-xl text-xs sm:text-sm text-blue-900 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/10 leading-relaxed text-justify">
+                            <strong><i class="fa-solid fa-lightbulb mr-1 text-yellow-500"></i> Pembahasan:</strong> ${q.pembahasan}
+                        </div>
+                    </div>
+                `;
+            }
+
+            workspace.innerHTML = `
+                <div class="space-y-8 animate-fadeIn">
+                    <div class="text-center space-y-4 max-w-md mx-auto">
+                        <div class="w-28 h-28 rounded-full border-4 ${scoreColor} mx-auto flex flex-col items-center justify-center shadow-lg">
+                            <span class="text-3xl font-black tracking-tight">${scorePercent}</span>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Skor Akhir</span>
+                        </div>
+                        <div class="space-y-1">
+                            <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Ujian Berhasil Disubmit!</h2>
+                            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Terima kasih telah berpartisipasi dalam pengerjaan simulasi ujian Asesmen Sumatif Akhir Semester Genap.</p>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Dashboard Grid -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 p-4 rounded-2xl text-center">
+                            <span class="block text-2xl font-black text-emerald-600 dark:text-emerald-400">${correct}</span>
+                            <span class="text-[10px] text-emerald-700 dark:text-emerald-500 font-bold uppercase tracking-wider block">Jawaban Benar</span>
+                        </div>
+                        <div class="bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/40 p-4 rounded-2xl text-center">
+                            <span class="block text-2xl font-black text-rose-600 dark:text-rose-400">${wrong}</span>
+                            <span class="text-[10px] text-rose-700 dark:text-rose-500 font-bold uppercase tracking-wider block">Jawaban Salah</span>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl text-center">
+                            <span class="block text-2xl font-black text-slate-600 dark:text-slate-400">${unanswered}</span>
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Tidak Diisi</span>
+                        </div>
+                    </div>
+
+                    <!-- Review Section Title -->
+                    <div class="border-t border-slate-200 dark:border-slate-800 pt-6 space-y-4">
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center">
+                            <i class="fa-solid fa-list-check mr-2.5 text-blue-500"></i> Analisis Koreksi & Peninjauan Lembar Soal
+                        </h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Di bawah ini adalah rincian jawaban pilihan ganda lengkap dengan ulasan argumentasi logis dari kunci jawaban guru pengampu.</p>
+                        
+                        <div class="space-y-4">
+                            ${reviewHTML}
+                        </div>
+                    </div>
+
+                    <!-- Return Button -->
+                    <div class="pt-6 text-center">
+                        <button onclick="restartCbtSession()" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-lg shadow-blue-500/20 transition">
+                            <i class="fa-solid fa-repeat mr-2"></i> Mulai Ulang Latihan Soal
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function restartCbtSession() {
+            window.location.reload();
+        }
+    </script>
+
+</body>
+</html>
