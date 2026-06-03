@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulasi Kisi-Kisi Matematika 2026</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- MathJax for Beautiful Math Rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .math-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom scrollbar for sidebar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md shadow-indigo-100">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-extrabold text-slate-900 tracking-tight">KISI-KISI MATEMATIKA 2026</h1>
+          <p class="text-xs text-indigo-600 font-semibold tracking-wider uppercase">Portal Ujian & Belajar Interaktif</p>
+        </div>
+      </div>
+      
+      <!-- App State Controllers -->
+      <div class="flex items-center space-x-4">
+        <!-- Mode Switcher -->
+        <div class="bg-slate-100 p-1 rounded-xl flex items-center space-x-1 border border-slate-200">
+          <button id="btn-mode-belajar" onclick="switchMode('belajar')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center space-x-1 bg-white text-indigo-600 shadow-sm">
+            <span>📖 Mode Belajar</span>
+          </button>
+          <button id="btn-mode-ujian" onclick="switchMode('ujian')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center space-x-1 text-slate-600 hover:text-slate-900">
+            <span>⏱️ Mode Ujian</span>
+          </button>
+        </div>
+        
+        <!-- Timer (Mode Ujian) -->
+        <div id="exam-timer-container" class="hidden bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-xl flex items-center space-x-2 text-rose-700 font-bold text-sm">
+          <span class="animate-pulse">🔴</span>
+          <span id="exam-timer" class="font-mono">45:00</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6">
+    
+    <!-- Sidebar / Question Navigation & Progress -->
+    <aside class="w-full lg:w-80 flex flex-col gap-4 shrink-0">
+      
+      <!-- Progress Card -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+        <h2 class="text-sm font-bold text-slate-900 mb-3 flex items-center justify-between">
+          <span>Progres Anda</span>
+          <span id="progress-percent" class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full text-xs font-semibold">0%</span>
+        </h2>
+        <div class="w-full bg-slate-100 rounded-full h-2 mb-4">
+          <div id="progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs text-slate-500">
+          <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
+            <span class="block text-slate-400 font-medium">Terjawab</span>
+            <span id="stat-answered" class="text-lg font-bold text-slate-800">0 / 20</span>
+          </div>
+          <div class="bg-slate-50 p-2 rounded-lg border border-slate-100">
+            <span class="block text-slate-400 font-medium">Ragu-ragu</span>
+            <span id="stat-flagged" class="text-lg font-bold text-amber-600">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Grid Card -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex-1 flex flex-col min-h-[320px]">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+          <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Navigasi Soal</h3>
+          <button onclick="resetQuiz()" class="text-xs text-rose-600 hover:text-rose-700 font-bold flex items-center space-x-1 transition">
+            <span>🔄 Reset</span>
+          </button>
+        </div>
+        
+        <!-- Pilihan Ganda Grid -->
+        <div class="mb-4">
+          <span class="text-xs font-bold text-slate-500 mb-2 block">Pilihan Ganda (1 - 15)</span>
+          <div class="grid grid-cols-5 gap-2" id="pg-nav-grid"></div>
+        </div>
+
+        <!-- Essay Grid -->
+        <div class="mb-4">
+          <span class="text-xs font-bold text-slate-500 mb-2 block">Essay (16 - 20)</span>
+          <div class="grid grid-cols-5 gap-2" id="essay-nav-grid"></div>
+        </div>
+
+        <!-- Submit Button in Exam Mode -->
+        <div class="mt-auto pt-4 border-t border-slate-100">
+          <button id="btn-submit-exam" onclick="finishExamPrompt()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-100 transition-all duration-200 flex items-center justify-center space-x-2">
+            <span>📥 Selesaikan Simulasi</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Quiz Area -->
+    <section class="flex-1 flex flex-col gap-6" id="quiz-workspace">
+      
+      <!-- Mode Info Banner -->
+      <div id="banner-mode-info" class="bg-emerald-50 border border-emerald-100 px-4 py-3 rounded-2xl flex items-start space-x-3 text-emerald-800">
+        <span class="text-lg leading-none">💡</span>
+        <div class="text-xs">
+          <p class="font-bold">Mode Belajar Aktif</p>
+          <p class="text-emerald-700 mt-0.5">Anda bisa melihat pembahasan detail setiap soal secara langsung untuk memahami konsep dasar eksponen dan trigonometri.</p>
+        </div>
+      </div>
+
+      <!-- Main Question Card -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 flex flex-col gap-6 transition-all duration-300">
+        
+        <!-- Question Header -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div class="flex items-center space-x-2">
+            <span id="question-badge-type" class="text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700">Pilihan Ganda</span>
+            <span id="question-badge-topic" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Trigonometri</span>
+          </div>
+          <button id="btn-flag-question" onclick="toggleFlagActiveQuestion()" class="text-xs font-bold text-slate-400 hover:text-amber-500 flex items-center space-x-1 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <span id="flag-text">Tandai Ragu-Ragu</span>
+          </button>
+        </div>
+
+        <!-- Question Body -->
+        <div class="space-y-4">
+          <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest" id="question-number-title">Soal 01</h2>
+          <div class="text-slate-800 text-lg font-medium leading-relaxed" id="question-text">
+            Loading...
+          </div>
+        </div>
+
+        <!-- Dynamic Visual Asset Block (SVG diagram for Geometry/Trig) -->
+        <div id="visual-diagram-container" class="hidden bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center">
+          <div id="visual-svg-wrapper" class="w-full max-w-[400px]"></div>
+          <span class="text-xs text-slate-400 mt-2 font-medium" id="visual-diagram-caption">Ilustrasi Geometri Soal</span>
+        </div>
+
+        <!-- Input / Options Block -->
+        <div id="answers-container" class="space-y-3">
+          <!-- Options will be injected here dynamically -->
+        </div>
+
+        <!-- Action Panel (Back, Next, Check) -->
+        <div class="flex items-center justify-between pt-6 border-t border-slate-100 mt-4">
+          <button id="btn-prev-question" onclick="prevQuestion()" class="px-5 py-2.5 border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm rounded-xl transition flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            <span>Kembali</span>
+          </button>
+
+          <button id="btn-check-answer" onclick="checkCurrentAnswer()" class="hidden px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-emerald-100">
+            Periksa Jawaban
+          </button>
+
+          <button id="btn-next-question" onclick="nextQuestion()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition flex items-center space-x-2">
+            <span>Berikutnya</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Mode Belajar: Pembahasan & Hints Panel -->
+      <div id="learning-solution-panel" class="hidden bg-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-xl flex flex-col gap-4">
+        <div class="flex items-center space-x-2 text-emerald-400">
+          <span class="text-lg">🎯</span>
+          <span class="text-sm font-extrabold uppercase tracking-wider">Kunci Jawaban & Pembahasan</span>
+        </div>
+        <div class="text-slate-300 text-sm leading-relaxed" id="solution-text">
+          <!-- Math solution details injected here -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Report & Analytics Section (Hidden by Default) -->
+    <section class="hidden flex-1 flex flex-col gap-6" id="report-workspace">
+      
+      <!-- Header Hasil -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center flex flex-col items-center gap-4">
+        <div class="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-inner bg-indigo-50 text-indigo-600" id="report-emoji">
+          🏆
+        </div>
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900" id="report-greeting">Luar Biasa, Kamu Menyelesaikan Simulasi!</h2>
+          <p class="text-sm text-slate-500 mt-1">Berikut adalah rekap hasil evaluasi latihan mandiri Anda.</p>
+        </div>
+
+        <!-- Scoreboard Matrix -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-2xl mt-4">
+          <div class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100 text-center">
+            <span class="block text-xs text-indigo-600 font-bold uppercase tracking-wider">Nilai Anda</span>
+            <span id="report-score" class="text-3xl font-extrabold text-indigo-700">85</span>
+            <span class="block text-xs text-slate-400 mt-1">Skala 100</span>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+            <span class="block text-xs text-slate-500 font-bold uppercase tracking-wider">Pilihan Ganda</span>
+            <span id="report-pg-stat" class="text-2xl font-extrabold text-slate-800">12 / 15</span>
+            <span class="block text-xs text-emerald-600 mt-1 font-semibold" id="report-pg-percent">80% Benar</span>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+            <span class="block text-xs text-slate-500 font-bold uppercase tracking-wider">Essay Diselesaikan</span>
+            <span id="report-essay-stat" class="text-2xl font-extrabold text-slate-800">5 / 5</span>
+            <span class="block text-xs text-slate-400 mt-1">Mandiri</span>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
+            <span class="block text-xs text-slate-500 font-bold uppercase tracking-wider">Waktu Tempuh</span>
+            <span id="report-time-spent" class="text-2xl font-extrabold text-slate-800">12:35</span>
+            <span class="block text-xs text-slate-400 mt-1">Dari total 45m</span>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3 mt-4">
+          <button onclick="switchMode('belajar')" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition">
+            Kembali Belajar
+          </button>
+          <button onclick="generateCertificate()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-indigo-100 flex items-center space-x-2">
+            <span>📜 Cetak Sertifikat</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Analytics Breakdown -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm flex flex-col gap-6">
+        <h3 class="text-base font-extrabold text-slate-900">Analisis Kemampuan Topik</h3>
+        <div class="space-y-4">
+          <!-- Topik 1 -->
+          <div>
+            <div class="flex items-center justify-between text-xs font-bold text-slate-600 mb-1.5">
+              <span>🧮 Fungsi & Persamaan Eksponen</span>
+              <span id="analytics-exponent-percent">85% Kuasai</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2">
+              <div id="analytics-exponent-bar" class="bg-emerald-500 h-2 rounded-full" style="width: 85%"></div>
+            </div>
+          </div>
+          <!-- Topik 2 -->
+          <div>
+            <div class="flex items-center justify-between text-xs font-bold text-slate-600 mb-1.5">
+              <span>📐 Trigonometri Dasar & Aturan Sudut</span>
+              <span id="analytics-trig-percent">65% Kuasai</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2">
+              <div id="analytics-trig-bar" class="bg-amber-500 h-2 rounded-full" style="width: 65%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Jawaban Detail -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm flex flex-col gap-4">
+        <h3 class="text-base font-extrabold text-slate-900">Review Jawaban Semua Soal</h3>
+        <div class="divide-y divide-slate-100" id="report-details-list">
+          <!-- Dynamic Injection of all solved/unsolved elements -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Interactive Modal: Certificate -->
+  <div id="certificate-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 relative flex flex-col gap-6 border-4 border-double border-indigo-200">
+      <button onclick="closeCertificate()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-xl">✕</button>
+      
+      <!-- Certificate Layout -->
+      <div class="text-center space-y-4 border border-indigo-50 p-6 rounded-xl bg-slate-50/50">
+        <span class="text-4xl">🎓</span>
+        <h4 class="text-xs font-bold uppercase tracking-widest text-indigo-600">Sertifikat Penyelesaian</h4>
+        <h3 class="text-xl font-serif font-bold text-slate-900">SIMULASI MANDIRI KISI-KISI 2026</h3>
+        <p class="text-xs text-slate-500">Diberikan secara elektronik kepada siswa atas pencapaian latihan mandiri matematika kurikulum 2026.</p>
+        
+        <div class="py-4">
+          <div class="text-lg font-bold border-b border-slate-200 max-w-xs mx-auto text-indigo-700 italic" id="cert-user-name">Siswa Unggul</div>
+          <span class="text-[10px] text-slate-400 uppercase tracking-widest block mt-1">Nama Siswa</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 text-left max-w-sm mx-auto text-xs border-t border-slate-200 pt-4">
+          <div>
+            <span class="text-slate-400 block">Predikat:</span>
+            <span id="cert-predicate" class="font-bold text-slate-800 text-sm">Sangat Memuaskan</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block">Nilai Akumulasi:</span>
+            <span id="cert-score" class="font-bold text-indigo-600 text-sm">90 / 100</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2 justify-end">
+        <button onclick="printCert()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold">Cetak / Simpan PDF</button>
+        <button onclick="closeCertificate()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Alert Notification -->
+  <div id="custom-toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3 text-xs z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <span id="toast-icon">ℹ️</span>
+    <span id="toast-message">Notifikasi</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-8">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 font-medium">
+      &copy; 2026 Portal Aplikasi Pendidikan Mandiri. Dikembangkan sesuai Panduan Silabus & Kisi-Kisi Matematika.
+    </div>
+  </footer>
+
+  <!-- Script Logic -->
+  <script>
+    // System Config & Global States
+    let appMode = 'belajar'; // 'belajar' or 'ujian'
+    let currentQuestionIdx = 0;
+    let examTimerInterval = null;
+    let examTimeLeft = 2700; // 45 minutes in seconds
+    let examStarted = false;
+    let startTime = null;
+    let timeSpentSeconds = 0;
+
+    // Data Store for User Choices & Text Areas
+    const userAnswers = {}; // { qIdx: selectedOptionIdx or textString }
+    const flaggedQuestions = {}; // { qIdx: true/false }
+    const checkedAnswers = {}; // { qIdx: true/false } - for learning mode (reveals solution)
+
+    // Master Question Dataset based on the KISIKISI2026 document
+    const questions = [
+      {
+        id: 1,
+        type: 'PG',
+        topic: 'Trigonometri',
+        text: 'Dari atas tebing, Ari melihat sebuah tanaman di atas tanah dengan sudut depresi $60^\\circ$. Jika tinggi tebing 120 meter, maka jarak tanaman tersebut ke dasar tebing adalah ....',
+        hint: 'Gunakan perbandingan trigonometri tangen untuk sudut $60^\\circ$. Ingat bahwa $\\tan(60^\\circ) = \\frac{\\text{Sisi Depan}}{\\text{Sisi Samping}}$. Sisi depan adalah tinggi tebing, dan sisi samping adalah jarak tanaman ke dasar tebing.',
+        options: [
+          '40 meter',
+          '$40\\sqrt{3}$ meter',
+          '$120\\sqrt{3}$ meter',
+          '60 meter',
+          '$60\\sqrt{3}$ meter'
+        ],
+        correctOptionIdx: 1, // 40\sqrt{3} meter
+        visualType: 'depresi_tebing',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Hubungkan informasi yang diketahui ke dalam sketsa segitiga siku-siku.</strong></p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Tinggi tebing ($h$) = $120\\text{ m}$ (sisi depan sudut)</li>
+              <li>Sudut depresi = $60^\\circ$, yang juga setara dengan sudut elevasi dari tanaman ke puncak tebing karena hubungan sudut berseberangan dalam.</li>
+              <li>Jarak tanaman ke dasar tebing ($x$) = sisi samping sudut</li>
+            </ul>
+            <p class="mt-2"><strong>Langkah 2: Terapkan rumus Tangen.</strong></p>
+            $$\\tan(60^\\circ) = \\frac{\\text{Depan}}{\\text{Samping}}$$
+            $$\\sqrt{3} = \\frac{120}{x}$$
+            $$x = \\frac{120}{\\sqrt{3}}$$
+            <p class="mt-2"><strong>Langkah 3: Rasionalkan pecahan.</strong></p>
+            $$x = \\frac{120}{\\sqrt{3}} \\times \\frac{\\sqrt{3}}{\\sqrt{3}} = \\frac{120\\sqrt{3}}{3} = 40\\sqrt{3}\\text{ meter}$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: B ($40\\sqrt{3}$ meter)</p>
+          </div>
+        `
+      },
+      {
+        id: 2,
+        type: 'PG',
+        topic: 'Trigonometri',
+        text: 'Seorang pengamat berada di puncak mercusuar setinggi $123$ meter sedang mengamati sebuah perahu di bawahnya dengan jarak horizontal antara perahu dan dasar mercusuar sejauh $36$ meter. Sudut depresi yang terbentuk adalah sekitar ....',
+        hint: 'Gunakan $\\tan(\\theta) = \\frac{\\text{tinggi mercusuar}}{\\text{jarak horizontal}}$. Hitung rasionya lalu tentukan sudutnya.',
+        options: [
+          '$30^\\circ$',
+          '$45^\\circ$',
+          '$60^\\circ$',
+          '$73,7^\\circ$',
+          '$16,3^\\circ$'
+        ],
+        correctOptionIdx: 3, // 73,7°
+        visualType: 'depresi_mercusuar',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Identifikasi posisi sudut dan panjang sisi.</strong></p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Tinggi Mercusuar (Depan sudut elevasi perahu) = $123\\text{ meter}$</li>
+              <li>Jarak horizontal (Samping sudut elevasi perahu) = $36\\text{ meter}$</li>
+            </ul>
+            <p class="mt-2"><strong>Langkah 2: Hitung nilai Tangen Sudut ($\\theta$).</strong></p>
+            $$\\tan(\\theta) = \\frac{\\text{Depan}}{\\text{Samping}} = \\frac{123}{36} \\approx 3,417$$
+            <p class="mt-2"><strong>Langkah 3: Cari sudut yang nilai tangennya mendekati 3,417.</strong></p>
+            $$\\theta = \\arctan(3,417) \\approx 73,7^\\circ$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: D ($73,7^\\circ$)</p>
+          </div>
+        `
+      },
+      {
+        id: 3,
+        type: 'PG',
+        topic: 'Trigonometri',
+        text: 'Kinan hendak mengukur tinggi pohon yang berjarak $53$ meter dari dirinya. Antara puncak pohon dan mata Kinan terbentuk sudut elevasi sebesar $30^\\circ$. Jika tinggi badan Kinan terukur sampai mata adalah $1,7$ meter, maka tinggi pohon tersebut adalah ....',
+        hint: 'Tinggi pohon = tinggi mata Kinan + (jarak horizontal $\\times \\tan 30^\\circ$).',
+        options: [
+          '$(53\\sqrt{3} + 1,7)$ meter',
+          '$(\\frac{53}{3}\\sqrt{3} + 1,7)$ meter',
+          '$(17,6 + 1,7)$ meter',
+          '$(\\frac{53}{2}\\sqrt{3} + 1,7)$ meter',
+          '$(53 + 1,7\\sqrt{3})$ meter'
+        ],
+        correctOptionIdx: 1, // (\frac{53}{3}\sqrt{3} + 1,7)
+        visualType: 'elevasi_pohon',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Misalkan tinggi bagian pohon di atas tinggi mata Kinan sebagai $y$.</strong></p>
+            $$\\tan(30^\\circ) = \\frac{y}{\\text{jarak}}$$
+            $$\\frac{1}{3}\\sqrt{3} = \\frac{y}{53} \\implies y = \\frac{53}{3}\\sqrt{3}\\text{ meter}$$
+            <p class="mt-2"><strong>Langkah 2: Hitung total tinggi pohon ($T$).</strong></p>
+            $$T = y + \\text{tinggi Kinan sampai mata}$$
+            $$T = \\left(\\frac{53}{3}\\sqrt{3} + 1,7\\right)\\text{ meter}$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: B ($(\\frac{53}{3}\\sqrt{3} + 1,7)$ meter)</p>
+          </div>
+        `
+      },
+      {
+        id: 4,
+        type: 'PG',
+        topic: 'Eksponen',
+        text: 'Jika $h(x) = 2^{5-2x} + 1$, maka nilai fungsi eksponen $h(2)$ adalah ....',
+        hint: 'Substitusi nilai $x = 2$ ke dalam persamaan fungsi eksponen $h(x)$.',
+        options: [
+          '2',
+          '3',
+          '5',
+          '9',
+          '33'
+        ],
+        correctOptionIdx: 1, // 3
+        visualType: 'eksponen_simple',
+        solution: `
+          <div class="space-y-2">
+            <p>Substitusikan $x = 2$ langsung ke dalam fungsi:</p>
+            $$h(2) = 2^{5 - 2(2)} + 1$$
+            $$h(2) = 2^{5 - 4} + 1$$
+            $$h(2) = 2^1 + 1 = 2 + 1 = 3$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: B (3)</p>
+          </div>
+        `
+      },
+      {
+        id: 5,
+        type: 'PG',
+        topic: 'Eksponen',
+        text: 'Hasil pemetaan $x = -1$ pada $f(x) = k \\cdot 2^{5x+8} - 11$ adalah $29$. Nilai $k$ yang memenuhi adalah ....',
+        hint: 'Hasil pemetaan artinya $f(-1) = 29$. Tulis persamaan tersebut lalu cari nilai $k$.',
+        options: [
+          '3',
+          '4',
+          '5',
+          '6',
+          '8'
+        ],
+        correctOptionIdx: 2, // 5
+        visualType: 'eksponen_simple',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Tulis persamaan pemetaan.</strong></p>
+            $$f(-1) = 29$$
+            $$k \\cdot 2^{5(-1)+8} - 11 = 29$$
+            <p class="mt-2"><strong>Langkah 2: Sederhanakan pangkat eksponen.</strong></p>
+            $$k \\cdot 2^{-5+8} - 11 = 29$$
+            $$k \\cdot 2^{3} - 11 = 29$$
+            $$8k - 11 = 29$$
+            <p class="mt-2"><strong>Langkah 3: Selesaikan persamaan untuk $k$.</strong></p>
+            $$8k = 29 + 11$$
+            $$8k = 40 \\implies k = 5$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: C (5)</p>
+          </div>
+        `
+      },
+      {
+        id: 6,
+        type: 'PG',
+        topic: 'Eksponen',
+        text: 'Penyelesaian dari persamaan eksponensial $\\frac{125^{3x-4}}{5^{10x}} = 125$ adalah ....',
+        hint: 'Ubah semua bilangan pokok (basis) menjadi $5$. Ingat bahwa $125 = 5^3$. Gunakan sifat eksponen $\\frac{a^m}{a^n} = a^{m-n}$.',
+        options: [
+          '$x = -15$',
+          '$x = -12$',
+          '$x = 3$',
+          '$x = 12$',
+          '$x = 15$'
+        ],
+        correctOptionIdx: 0, // x = -15
+        visualType: 'eksponen_simple',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Ubah bilangan pokok ke basis 5.</strong></p>
+            $$125 = 5^3$$
+            $$\\text{Persamaan: } \\frac{(5^3)^{3x-4}}{5^{10x}} = 5^3$$
+            <p class="mt-2"><strong>Langkah 2: Gunakan sifat-sifat eksponen.</strong></p>
+            $$\\frac{5^{3(3x-4)}}{5^{10x}} = 5^3$$
+            $$\\frac{5^{9x-12}}{5^{10x}} = 5^3$$
+            $$5^{(9x-12) - 10x} = 5^3$$
+            $$5^{-x-12} = 5^3$$
+            <p class="mt-2"><strong>Langkah 3: Samakan eksponennya.</strong></p>
+            $$-x - 12 = 3$$
+            $$-x = 3 + 12$$
+            $$-x = 15 \\implies x = -15$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: A ($x = -15$)</p>
+          </div>
+        `
+      },
+      {
+        id: 7,
+        type: 'PG',
+        topic: 'Eksponen',
+        text: 'Penyelesaian dari persamaan eksponen $4^{2x+8} = 16$ adalah ....',
+        hint: 'Samakan basis kedua ruas. Ingat bahwa $16 = 4^2$.',
+        options: [
+          '$x = -5$',
+          '$x = -3$',
+          '$x = -1$',
+          '$x = 2$',
+          '$x = 4$'
+        ],
+        correctOptionIdx: 1, // x = -3
+        visualType: 'eksponen_simple',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Samakan basisnya.</strong></p>
+            $$4^{2x+8} = 4^2$$
+            <p class="mt-2"><strong>Langkah 2: Buat persamaan dari eksponennya.</strong></p>
+            $$2x + 8 = 2$$
+            $$2x = 2 - 8$$
+            $$2x = -6$$
+            $$x = -3$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: B ($x = -3$)</p>
+          </div>
+        `
+      },
+      {
+        id: 8,
+        type: 'PG',
+        topic: 'Eksponen',
+        text: 'Nilai $x$ yang memenuhi persamaan eksponen $64^{x-2} = 1$ adalah ....',
+        hint: 'Ingat sifat eksponen $a^0 = 1$ untuk setiap $a \\neq 0$. Maka pangkatnya harus sama dengan 0.',
+        options: [
+          '$x = 0$',
+          '$x = 1$',
+          '$x = 2$',
+          '$x = 4$',
+          '$x = 8$'
+        ],
+        correctOptionIdx: 2, // x = 2
+        visualType: 'eksponen_simple',
+        solution: `
+          <div class="space-y-2">
+            <p>Persamaan: $64^{x-2} = 1$.</p>
+            <p>Karena kita tahu $64^0 = 1$, maka kita dapat menulis:</p>
+            $$64^{x-2} = 64^0$$
+            <p>Sehingga:</p>
+            $$x - 2 = 0 \\implies x = 2$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: C ($x = 2$)</p>
+          </div>
+        `
+      },
+      {
+        id: 9,
+        type: 'PG',
+        topic: 'Eksponen',
+        text: 'Nilai $x$ pada persamaan eksponen $27^x \\cdot 81 = 3^{6x-5}$ adalah ....',
+        hint: 'Ubah basis 27 dan 81 menjadi basis 3. $27 = 3^3$ dan $81 = 3^4$. Gunakan aturan perkalian eksponen $a^m \\cdot a^n = a^{m+n}$.',
+        options: [
+          '$x = 1$',
+          '$x = 2$',
+          '$x = 3$',
+          '$x = 4$',
+          '$x = 5$'
+        ],
+        correctOptionIdx: 2, // x = 3
+        visualType: 'eksponen_simple',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Ubah semua ke basis 3.</strong></p>
+            $$(3^3)^x \\cdot 3^4 = 3^{6x-5}$$
+            $$3^{3x} \\cdot 3^4 = 3^{6x-5}$$
+            <p class="mt-2"><strong>Langkah 2: Sederhanakan perkalian ruas kiri.</strong></p>
+            $$3^{3x+4} = 3^{6x-5}$$
+            <p class="mt-2"><strong>Langkah 3: Samakan eksponennya.</strong></p>
+            $$3x + 4 = 6x - 5$$
+            $$4 + 5 = 6x - 3x$$
+            $$9 = 3x \\implies x = 3$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: C ($x = 3$)</p>
+          </div>
+        `
+      },
+      {
+        id: 10,
+        type: 'PG',
+        topic: 'Eksponen',
+        text: 'Himpunan penyelesaian dari persamaan kuadrat eksponensial $3^{x^2-7x-16} = 9$ adalah ....',
+        hint: 'Ubah $9$ menjadi $3^2$. Maka persamaan pangkatnya adalah $x^2 - 7x - 16 = 2$. Faktorkan persamaan kuadrat tersebut.',
+        options: [
+          '$\\{ -2, 9 \\}$',
+          '$\\{ -9, 2 \\}$',
+          '$\\{ -3, 6 \\}$',
+          '$\\{ 1, 9 \\}$',
+          '$\\{ -2, -9 \\}$'
+        ],
+        correctOptionIdx: 0, // { -2, 9 }
+        visualType: 'eksponen_simple',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Ubah angka 9 menjadi basis 3.</strong></p>
+            $$3^{x^2-7x-16} = 3^2$$
+            $$x^2 - 7x - 16 = 2$$
+            <p class="mt-2"><strong>Langkah 2: Jadikan persamaan kuadrat sama dengan 0.</strong></p>
+            $$x^2 - 7x - 16 - 2 = 0$$
+            $$x^2 - 7x - 18 = 0$$
+            <p class="mt-2"><strong>Langkah 3: Faktorkan persamaan kuadrat.</strong></p>
+            $$(x - 9)(x + 2) = 0$$
+            $$x = 9 \\quad \\text{atau} \\quad x = -2$$
+            <p>Maka Himpunan Penyelesaiannya (HP) adalah $\\{ -2, 9 \\}$.</p>
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: A ($\\{ -2, 9 \\}$)</p>
+          </div>
+        `
+      },
+      {
+        id: 11,
+        type: 'PG',
+        topic: 'Trigonometri',
+        text: 'Perhatikan segitiga siku-siku $KLM$ yang siku-siku di $L$. Diketahui panjang sisi $KL = 3$ dan panjang sisi $LM = 4$. Sudut $\\beta$ terletak di titik $M$. Nilai dari $\\csc \\beta$ adalah ....',
+        hint: 'Pertama, cari sisi miring $KM$ menggunakan Pythagoras. Kemudian gunakan definisi cosecan: $\\csc \\beta = \\frac{\\text{Sisi Miring}}{\\text{Sisi Depan Sudut}}$. Sisi depan sudut $M$ adalah $KL$.',
+        options: [
+          '$\\frac{3}{5}$',
+          '$\\frac{4}{5}$',
+          '$\\frac{5}{3}$',
+          '$\\frac{5}{4}$',
+          '$\\frac{4}{3}$'
+        ],
+        correctOptionIdx: 2, // 5/3
+        visualType: 'segitiga_klm',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Cari panjang sisi miring $KM$ dengan Teorema Pythagoras.</strong></p>
+            $$KM = \\sqrt{KL^2 + LM^2} = \\sqrt{3^2 + 4^2} = \\sqrt{9 + 16} = \\sqrt{25} = 5$$
+            <p class="mt-2"><strong>Langkah 2: Tentukan posisi sisi terhadap sudut $\\beta$ di titik $M$.</strong></p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Sisi Depan ($de$) = $KL = 3$</li>
+              <li>Sisi Samping ($sa$) = $LM = 4$</li>
+              <li>Sisi Miring ($mi$) = $KM = 5$</li>
+            </ul>
+            <p class="mt-2"><strong>Langkah 3: Cari nilai $\\csc \\beta$.</strong></p>
+            $$\\csc \\beta = \\frac{1}{\\sin \\beta} = \\frac{\\text{Miring}}{\\text{Depan}} = \\frac{5}{3}$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: C ($\\frac{5}{3}$)</p>
+          </div>
+        `
+      },
+      {
+        id: 12,
+        type: 'PG',
+        topic: 'Trigonometri',
+        text: 'Berdasarkan informasi segitiga siku-siku $KLM$ pada soal sebelumnya (siku-siku di $L$, $KL = 3$, $LM = 4$, sudut $\\beta$ di titik $M$), nilai dari $\\cot \\beta$ adalah ....',
+        hint: 'Cotangen adalah kebalikan dari tangen. Definisi cotangen: $\\cot \\beta = \\frac{\\text{Sisi Samping}}{\\text{Sisi Depan}}$. Sisi samping adalah $LM$ dan depan adalah $KL$.',
+        options: [
+          '$\\frac{3}{4}$',
+          '$\\frac{4}{3}$',
+          '$\\frac{3}{5}$',
+          '$\\frac{5}{4}$',
+          '$\\frac{4}{5}$'
+        ],
+        correctOptionIdx: 1, // 4/3
+        visualType: 'segitiga_klm',
+        solution: `
+          <div class="space-y-2">
+            <p>Dari soal sebelumnya, kita tahu sisi-sisi di sekitar sudut $\\beta$ (pada titik $M$):</p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Sisi Samping ($sa$) = $LM = 4$</li>
+              <li>Sisi Depan ($de$) = $KL = 3$</li>
+            </ul>
+            <p class="mt-2">Definisi Cotangen ($\\cot$):</p>
+            $$\\cot \\beta = \\frac{\\text{Samping}}{\\text{Depan}} = \\frac{sa}{de} = \\frac{4}{3}$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: B ($\\frac{4}{3}$)</p>
+          </div>
+        `
+      },
+      {
+        id: 13,
+        type: 'PG',
+        topic: 'Trigonometri',
+        text: 'Seorang anak sedang bermain layang-layang di lapangan. Panjang benang layang-layang yang diulurkan adalah $20$ meter. Jarak posisi anak berdiri di tanah dengan titik tepat di bawah layang-layang adalah $16$ meter. Tinggi layang-layang tersebut dari permukaan tanah adalah ....',
+        hint: 'Masalah ini membentuk segitiga siku-siku dengan panjang benang sebagai sisi miring (20 m) dan jarak horizontal sebagai salah satu sisi siku-siku (16 m). Cari sisi tegak (tinggi).',
+        options: [
+          '10 meter',
+          '12 meter',
+          '14 meter',
+          '15 meter',
+          '18 meter'
+        ],
+        correctOptionIdx: 1, // 12
+        visualType: 'layang_layang',
+        solution: `
+          <div class="space-y-2">
+            <p>Gunakan rumus Pythagoras untuk mencari tinggi ($t$):</p>
+            $$t^2 + 16^2 = 20^2$$
+            $$t^2 + 256 = 400$$
+            $$t^2 = 400 - 256$$
+            $$t^2 = 144$$
+            $$t = \\sqrt{144} = 12\\text{ meter}$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: B (12 meter)</p>
+          </div>
+        `
+      },
+      {
+        id: 14,
+        type: 'PG',
+        topic: 'Trigonometri',
+        text: 'Perhatikan gambar segitiga siku-siku $PQR$ di bawah (siku-siku di $Q$). Diketahui panjang sisi miring $PR = 2$, dan sudut $\\alpha$ terletak di titik $P$. Jika panjang sisi depan sudut $\\alpha$ yaitu $QR = 1$, maka panjang sisi samping $PQ$ adalah ....',
+        hint: 'Gunakan teorema Pythagoras: $PQ = \\sqrt{PR^2 - QR^2}$.',
+        options: [
+          '$\\sqrt{2}$',
+          '$\\sqrt{3}$',
+          '$\\sqrt{5}$',
+          '1',
+          '3'
+        ],
+        correctOptionIdx: 1, // \sqrt{3}
+        visualType: 'segitiga_pqr',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Gunakan Teorema Pythagoras untuk mencari $PQ$.</strong></p>
+            $$PQ = \\sqrt{PR^2 - QR^2}$$
+            $$PQ = \\sqrt{2^2 - 1^2}$$
+            $$PQ = \\sqrt{4 - 1} = \\sqrt{3}$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: B ($\\sqrt{3}$)</p>
+          </div>
+        `
+      },
+      {
+        id: 15,
+        type: 'PG',
+        topic: 'Trigonometri',
+        text: 'Menggunakan informasi segitiga siku-siku $PQR$ pada nomor sebelumnya (siku-siku di $Q$, $PR = 2$, $QR = 1$, $PQ = \\sqrt{3}$), nilai dari $\\sin \\alpha$ adalah ....',
+        hint: 'Definisi sinus: $\\sin \\alpha = \\frac{\\text{Sisi Depan}}{\\text{Sisi Miring}}$. Sisi depan sudut $\\alpha$ di $P$ adalah $QR$, dan sisi miring adalah $PR$.',
+        options: [
+          '$\\frac{1}{2}$',
+          '$\\frac{1}{2}\\sqrt{3}$',
+          '$\\sqrt{3}$',
+          '$\\frac{1}{3}\\sqrt{3}$',
+          '1'
+        ],
+        correctOptionIdx: 0, // 1/2
+        visualType: 'segitiga_pqr',
+        solution: `
+          <div class="space-y-2">
+            <p>Definisi Sinus:</p>
+            $$\\sin \\alpha = \\frac{\\text{Sisi Depan}}{\\text{Sisi Miring}} = \\frac{QR}{PR}$$
+            $$\\sin \\alpha = \\frac{1}{2}$$
+            <p class="text-emerald-400 font-bold mt-2">Jawaban Benar: A ($\\frac{1}{2}$)</p>
+          </div>
+        `
+      },
+      // ESSAY QUESTIONS (16 - 20)
+      {
+        id: 16,
+        type: 'Essay',
+        topic: 'Trigonometri',
+        text: 'Kembali merujuk pada segitiga siku-siku $PQR$ yang siku-siku di $Q$ dengan sisi miring $PR = 2$ dan $QR = 1$. Hitunglah nilai eksak dari $\\cos \\alpha$!',
+        hint: 'Definisi cosinus: $\\cos \\alpha = \\frac{\\text{Sisi Samping}}{\\text{Sisi Miring}} = \\frac{PQ}{PR}$.',
+        correctSample: '1/2 sqrt(3) atau 0.5 sqrt(3)',
+        solution: `
+          <div class="space-y-2">
+            <p>Dari perhitungan sebelumnya menggunakan Pythagoras:</p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Sisi Samping ($sa$) = $PQ = \\sqrt{3}$</li>
+              <li>Sisi Miring ($mi$) = $PR = 2$</li>
+            </ul>
+            <p class="mt-2">Definisi Cosinus ($\\cos$):</p>
+            $$\\cos \\alpha = \\frac{\\text{Samping}}{\\text{Miring}} = \\frac{\\sqrt{3}}{2} = \\frac{1}{2}\\sqrt{3}$$
+          </div>
+        `
+      },
+      {
+        id: 17,
+        type: 'Essay',
+        topic: 'Trigonometri',
+        text: 'Menggunakan data segitiga siku-siku $PQR$ di atas ($PR=2, QR=1, PQ=\\sqrt{3}$), tentukan nilai dari $\\tan \\alpha$ (rasionalkan penyebutnya)!',
+        hint: 'Tangen sudut $\\alpha$ adalah perbandingan Sisi Depan dibanding Sisi Samping. Jangan lupa merasionalkan bentuk penyebutnya!',
+        correctSample: '1/3 sqrt(3)',
+        solution: `
+          <div class="space-y-2">
+            <p>Definisi Tangen ($\\tan$):</p>
+            $$\\tan \\alpha = \\frac{\\text{Depan}}{\\text{Samping}} = \\frac{QR}{PQ}$$
+            $$\\tan \\alpha = \\frac{1}{\\sqrt{3}}$$
+            <p class="mt-2">Rasionalkan pecahan:</p>
+            $$\\tan \\alpha = \\frac{1}{\\sqrt{3}} \\times \\frac{\\sqrt{3}}{\\sqrt{3}} = \\frac{\\sqrt{3}}{3} = \\frac{1}{3}\\sqrt{3}$$
+          </div>
+        `
+      },
+      {
+        id: 18,
+        type: 'Essay',
+        topic: 'Trigonometri',
+        text: 'Hitunglah nilai akhir dari operasi pecahan trigonometri sudut istimewa berikut: <br><br> $$\\frac{\\cos(45^\\circ) \\cdot \\tan(60^\\circ)}{\\tan(30^\\circ) \\cdot \\sin(90^\\circ)}$$',
+        hint: 'Substitusi nilai trigonometri sudut istimewa terlebih dahulu: $\\cos 45^\\circ = \\frac{1}{2}\\sqrt{2}$, $\\tan 60^\\circ = \\sqrt{3}$, $\\tan 30^\\circ = \\frac{1}{3}\\sqrt{3}$, $\\sin 90^\\circ = 1$. Sederhanakan perkaliannya.',
+        correctSample: '3/2 sqrt(2) atau 1.5 sqrt(2)',
+        solution: `
+          <div class="space-y-2">
+            <p><strong>Langkah 1: Tulis nilai sudut istimewa yang bersesuaian.</strong></p>
+            <ul class="list-disc list-inside space-y-1">
+              <li>$\\cos(45^\\circ) = \\frac{1}{2}\\sqrt{2}$</li>
+              <li>$\\tan(60^\\circ) = \\sqrt{3}$</li>
+              <li>$\\tan(30^\\circ) = \\frac{1}{3}\\sqrt{3}$</li>
+              <li>$\\sin(90^\\circ) = 1$</li>
+            </ul>
+            <p class="mt-2"><strong>Langkah 2: Substitusikan ke dalam persamaan pecahan.</strong></p>
+            $$\\frac{\\left(\\frac{1}{2}\\sqrt{2}\\right) \\cdot \\left(\\sqrt{3}\\right)}{\\left(\\frac{1}{3}\\sqrt{3}\\right) \\cdot 1}$$
+            <p class="mt-2"><strong>Langkah 3: Coret $\\sqrt{3}$ pada pembilang dan penyebut.</strong></p>
+            $$\\frac{\\frac{1}{2}\\sqrt{2} \\cdot \\cancel{\\sqrt{3}}}{\\frac{1}{3}\\cancel{\\sqrt{3}}} = \\frac{\\frac{1}{2}\\sqrt{2}}{\\frac{1}{3}}$$
+            <p class="mt-2"><strong>Langkah 4: Kalikan dengan kebalikan penyebut.</strong></p>
+            $$\\frac{1}{2}\\sqrt{2} \\times 3 = \\frac{3}{2}\\sqrt{2}$$
+          </div>
+        `
+      },
+      {
+        id: 19,
+        type: 'Essay',
+        topic: 'Trigonometri',
+        text: 'Tentukan hasil perhitungan aljabar nilai trigonometri berikut ini: <br><br> $$\\sin(30^\\circ) + \\cos(60^\\circ) - \\sin(90^\\circ)$$',
+        hint: 'Substitusikan nilai dasar sudut istimewa: $\\sin 30^\\circ = 1/2$, $\\cos 60^\\circ = 1/2$, dan $\\sin 90^\\circ = 1$.',
+        correctSample: '0',
+        solution: `
+          <div class="space-y-2">
+            <p>Substitusikan nilai sudut istimewanya:</p>
+            $$\\sin(30^\\circ) = \\frac{1}{2}$$
+            $$\\cos(60^\\circ) = \\frac{1}{2}$$
+            $$\\sin(90^\\circ) = 1$$
+            <p class="mt-2">Masukkan ke operasi matematika:</p>
+            $$\\frac{1}{2} + \\frac{1}{2} - 1$$
+            $$1 - 1 = 0$$
+          </div>
+        `
+      },
+      {
+        id: 20,
+        type: 'Essay',
+        topic: 'Trigonometri',
+        text: 'Hitunglah nilai dari ekspresi berikut ini: <br><br> $$5(\\sin 45^\\circ) + \\cos 45^\\circ$$',
+        hint: 'Ingat bahwa $\\sin 45^\\circ = \\cos 45^\\circ = \\frac{1}{2}\\sqrt{2}$. Kelompokkan suku sejenis untuk mempermudah penjumlahan.',
+        correctSample: '3 sqrt(2)',
+        solution: `
+          <div class="space-y-2">
+            <p>Gunakan nilai $\\sin 45^\\circ = \\cos 45^\\circ = \\frac{1}{2}\\sqrt{2}$:</p>
+            $$5\\left(\\frac{1}{2}\\sqrt{2}\\right) + \\frac{1}{2}\\sqrt{2}$$
+            <p class="mt-2">Faktorkan keluar $\\frac{1}{2}\\sqrt{2}$ atau jumlahkan koefisiennya:</p>
+            $$\\left(5 + 1\\right) \\cdot \\frac{1}{2}\\sqrt{2}$$
+            $$6 \\cdot \\frac{1}{2}\\sqrt{2} = 3\\sqrt{2}$$
+          </div>
+        `
+      }
+    ];
+
+    // Initialize Navigation Grids
+    function initNavigation() {
+      const pgGrid = document.getElementById('pg-nav-grid');
+      const essayGrid = document.getElementById('essay-nav-grid');
+      
+      pgGrid.innerHTML = '';
+      essayGrid.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        btn.id = `nav-btn-${idx}`;
+        btn.className = `w-10 h-10 flex items-center justify-center rounded-xl font-bold text-xs border transition-all duration-200 shadow-sm ${getNavBtnClass(idx)}`;
+        btn.innerHTML = q.id;
+        btn.onclick = () => jumpToQuestion(idx);
+        
+        if (q.type === 'PG') {
+          pgGrid.appendChild(btn);
+        } else {
+          essayGrid.appendChild(btn);
+        }
+      });
+      
+      updateSidebarProgress();
+    }
+
+    // Dynamic classes based on answer / flag status
+    function getNavBtnClass(idx) {
+      const isSelected = idx === currentQuestionIdx;
+      const isAnswered = userAnswers[idx] !== undefined && userAnswers[idx] !== '';
+      const isFlagged = flaggedQuestions[idx] === true;
+
+      let base = '';
+      if (isSelected) {
+        base = 'border-slate-900 bg-slate-900 text-white ring-2 ring-slate-900/10 scale-105';
+      } else if (isFlagged) {
+        base = 'border-amber-300 bg-amber-50 text-amber-700 font-bold';
+      } else if (isAnswered) {
+        base = 'border-indigo-200 bg-indigo-50 text-indigo-700';
+      } else {
+        base = 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50';
+      }
+      return base;
+    }
+
+    function updateSidebarProgress() {
+      // Calculate Answered Count
+      let answeredCount = 0;
+      questions.forEach((q, idx) => {
+        if (userAnswers[idx] !== undefined && userAnswers[idx] !== '') {
+          answeredCount++;
+        }
+      });
+
+      // Calculate Flagged
+      let flaggedCount = 0;
+      questions.forEach((q, idx) => {
+        if (flaggedQuestions[idx]) flaggedCount++;
+      });
+
+      const total = questions.length;
+      const percent = Math.round((answeredCount / total) * 100);
+
+      document.getElementById('progress-percent').innerText = `${percent}%`;
+      document.getElementById('progress-bar').style.width = `${percent}%`;
+      document.getElementById('stat-answered').innerText = `${answeredCount} / ${total}`;
+      document.getElementById('stat-flagged').innerText = flaggedCount;
+    }
+
+    // Render Active Question
+    function renderQuestion() {
+      const q = questions[currentQuestionIdx];
+      
+      // Update Badge & Header Info
+      document.getElementById('question-number-title').innerText = `Soal ${String(q.id).padStart(2, '0')}`;
+      document.getElementById('question-badge-type').innerText = q.type === 'PG' ? 'Pilihan Ganda' : 'Jawaban Singkat (Essay)';
+      
+      const typeBadge = document.getElementById('question-badge-type');
+      if (q.type === 'PG') {
+        typeBadge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700';
+      } else {
+        typeBadge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700';
+      }
+
+      document.getElementById('question-badge-topic').innerText = q.topic;
+      document.getElementById('question-text').innerHTML = q.text;
+
+      // Reset Active Flag Checkbox
+      const flagText = document.getElementById('flag-text');
+      if (flaggedQuestions[currentQuestionIdx]) {
+        flagText.innerText = 'Batal Ragu-Ragu';
+        flagText.parentElement.classList.add('text-amber-500');
+      } else {
+        flagText.innerText = 'Tandai Ragu-Ragu';
+        flagText.parentElement.classList.remove('text-amber-500');
+      }
+
+      // Render Visual Vector/SVG asset if exists
+      renderVisualDiagram(q);
+
+      // Render Options Container or Text Area
+      const answersContainer = document.getElementById('answers-container');
+      answersContainer.innerHTML = '';
+
+      if (q.type === 'PG') {
+        q.options.forEach((opt, oIdx) => {
+          const isSelected = userAnswers[currentQuestionIdx] === oIdx;
+          const optBtn = document.createElement('div');
+          optBtn.className = `group flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-150 ${
+            isSelected 
+              ? 'border-indigo-600 bg-indigo-50/50 text-indigo-900' 
+              : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-700'
+          }`;
+          optBtn.onclick = () => selectPGAnswer(oIdx);
+
+          const alphabet = ['A', 'B', 'C', 'D', 'E'];
+          optBtn.innerHTML = `
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg font-bold text-xs mr-3 transition ${
+              isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+            }">
+              ${alphabet[oIdx]}
+            </div>
+            <div class="text-sm font-medium leading-relaxed flex-1">${opt}</div>
+          `;
+          answersContainer.appendChild(optBtn);
+        });
+      } else {
+        // Essay Layout
+        const userVal = userAnswers[currentQuestionIdx] || '';
+        answersContainer.innerHTML = `
+          <div class="space-y-3">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Tuliskan Langkah Analisis & Hasil Akhir Anda:</span>
+            <textarea id="essay-input" oninput="saveEssayAnswer(this.value)" rows="5" class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 text-sm font-mono placeholder:font-sans" placeholder="Tuliskan jawaban Anda di sini...">${userVal}</textarea>
+            
+            <div class="bg-indigo-50/50 border border-indigo-100 p-3.5 rounded-xl text-xs text-indigo-900">
+              <span class="font-bold">💡 Petunjuk Singkat:</span> ${q.hint}
+            </div>
+          </div>
+        `;
+      }
+
+      // Handle Solutions Visibility for Learning Mode
+      const solutionPanel = document.getElementById('learning-solution-panel');
+      const checkBtn = document.getElementById('btn-check-answer');
+
+      if (appMode === 'belajar') {
+        checkBtn.classList.remove('hidden');
+        if (checkedAnswers[currentQuestionIdx]) {
+          solutionPanel.classList.remove('hidden');
+          document.getElementById('solution-text').innerHTML = q.solution;
+        } else {
+          solutionPanel.classList.add('hidden');
+        }
+      } else {
+        checkBtn.classList.add('hidden');
+        solutionPanel.classList.add('hidden');
+      }
+
+      // Update Navigation styling
+      initNavigation();
+
+      // Trigger MathJax typeset to render mathematics nicely
+      if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    // Draw Dynamic Diagrams via SVG Code Injection
+    function renderVisualDiagram(q) {
+      const container = document.getElementById('visual-diagram-container');
+      const wrapper = document.getElementById('visual-svg-wrapper');
+      const caption = document.getElementById('visual-diagram-caption');
+
+      if (!q.visualType) {
+        container.classList.add('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      
+      let svgContent = '';
+      if (q.visualType === 'depresi_tebing') {
+        caption.innerText = 'Visualisasi Sudut Depresi Tebing Ari (Sudut Depresi = 60°)';
+        svgContent = `
+          <svg viewBox="0 0 400 250" class="w-full h-auto">
+            <!-- Sky/Ground line -->
+            <rect width="400" height="250" fill="#f8fafc" />
+            <line x1="10" y1="210" x2="390" y2="210" stroke="#94a3b8" stroke-width="3" />
+            
+            <!-- Cliff / Tebing -->
+            <path d="M 50,50 L 50,210 L 100,210 L 110,180 L 120,210 L 390,210" fill="none" stroke="#475569" stroke-width="4" stroke-linejoin="round"/>
+            <rect x="10" y="50" width="40" height="160" fill="#cbd5e1" opacity="0.3"/>
+            
+            <!-- Ari & Puncak Tebing -->
+            <circle cx="50" cy="40" r="6" fill="#4f46e5" />
+            <text x="35" y="25" font-size="12" font-weight="bold" fill="#4f46e5">Ari</text>
+            
+            <!-- Tanaman di dasar tebing -->
+            <circle cx="320" cy="210" r="5" fill="#16a34a" />
+            <path d="M 320,210 L 315,200 M 320,210 L 325,198 M 320,210 L 320,195" stroke="#16a34a" stroke-width="2"/>
+            <text x="300" y="225" font-size="12" font-weight="bold" fill="#16a34a">Tanaman</text>
+            
+            <!-- Garis bantu & Sudut Depresi -->
+            <line x1="50" y1="40" x2="200" y2="40" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4" />
+            <line x1="50" y1="40" x2="320" y2="210" stroke="#f43f5e" stroke-width="2" />
+            
+            <!-- Sudut Depresi Arc -->
+            <path d="M 80,40 A 30 30 0 0 1 76,57" fill="none" stroke="#f43f5e" stroke-width="2" />
+            <text x="90" y="35" font-size="11" fill="#f43f5e">60°</text>
+            
+            <!-- Label Tebing -->
+            <line x1="30" y1="50" x2="30" y2="210" stroke="#475569" stroke-width="1.5" />
+            <text x="15" y="135" font-size="11" fill="#475569" transform="rotate(-90 15 135)">Tebing = 120 m</text>
+            
+            <!-- Jarak dasar ke tanaman -->
+            <line x1="50" y1="230" x2="320" y2="230" stroke="#475569" stroke-width="1.5" />
+            <text x="175" y="245" font-size="11" fill="#475569" text-anchor="middle">Jarak Tanaman (x)</text>
+          </svg>
+        `;
+      } else if (q.visualType === 'depresi_mercusuar') {
+        caption.innerText = 'Visualisasi Pengamatan Mercusuar (Tinggi = 123m, Jarak Horizontal = 36m)';
+        svgContent = `
+          <svg viewBox="0 0 400 250" class="w-full h-auto">
+            <rect width="400" height="250" fill="#f8fafc" />
+            <!-- Sea Line -->
+            <line x1="10" y1="210" x2="390" y2="210" stroke="#0284c7" stroke-width="3" />
+            
+            <!-- Mercusuar Tower -->
+            <path d="M 60,60 L 50,210 L 90,210 L 80,60 Z" fill="#e2e8f0" stroke="#475569" stroke-width="3"/>
+            <rect x="63" y="60" width="14" height="20" fill="#ea580c"/>
+            <circle cx="70" cy="50" r="8" fill="#eab308"/>
+            
+            <!-- Perahu -->
+            <path d="M 310,210 L 330,210 L 325,218 L 315,218 Z" fill="#b91c1c"/>
+            <path d="M 320,210 L 320,195 L 328,203 Z" fill="#f8fafc" stroke="#b91c1c" stroke-width="1.5"/>
+            <text x="310" y="235" font-size="11" font-weight="bold" fill="#0284c7">Perahu</text>
+            
+            <!-- Jarak Horizontal -->
+            <line x1="70" y1="210" x2="320" y2="210" stroke="#0284c7" stroke-width="2" stroke-dasharray="3"/>
+            
+            <!-- Garis Penglihatan & Sudut -->
+            <line x1="70" y1="50" x2="320" y2="210" stroke="#f43f5e" stroke-width="2" />
+            <line x1="70" y1="50" x2="190" y2="50" stroke="#64748b" stroke-width="1" stroke-dasharray="3" />
+            
+            <!-- Labels -->
+            <text x="180" y="200" font-size="11" fill="#475569">Jarak = 36 m</text>
+            <text x="100" y="130" font-size="11" fill="#475569" transform="rotate(-90 100 130)">Mercusuar = 123 m</text>
+            <text x="100" y="45" font-size="11" fill="#f43f5e">Sudut Depresi (θ)</text>
+          </svg>
+        `;
+      } else if (q.visualType === 'elevasi_pohon') {
+        caption.innerText = 'Visualisasi Sudut Elevasi Kinan Mengukur Pohon (Sudut = 30°)';
+        svgContent = `
+          <svg viewBox="0 0 400 250" class="w-full h-auto">
+            <rect width="400" height="250" fill="#f8fafc" />
+            <line x1="10" y1="210" x2="390" y2="210" stroke="#475569" stroke-width="2" />
+            
+            <!-- Kinan -->
+            <line x1="60" y1="210" x2="60" y2="150" stroke="#4f46e5" stroke-width="3" />
+            <circle cx="60" cy="140" r="10" fill="#4f46e5" />
+            <text x="45" y="225" font-size="11" font-weight="bold" fill="#4f46e5">Kinan (1,7m)</text>
+            
+            <!-- Pohon -->
+            <rect x="300" y="70" width="15" height="140" fill="#78350f" />
+            <ellipse cx="307" cy="65" rx="35" ry="45" fill="#15803d" opacity="0.9"/>
+            <text x="290" y="225" font-size="11" font-weight="bold" fill="#15803d">Pohon (T)</text>
+            
+            <!-- Garis mata horizontal -->
+            <line x1="60" y1="140" x2="307" y2="140" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4" />
+            
+            <!-- Garis pandang ke puncak pohon -->
+            <line x1="60" y1="140" x2="307" y2="30" stroke="#f43f5e" stroke-width="2" />
+            
+            <!-- Label Jarak -->
+            <line x1="60" y1="145" x2="60" y2="160" stroke="#94a3b8" stroke-width="1"/>
+            <text x="180" y="155" font-size="11" fill="#475569" text-anchor="middle">Jarak = 53 m</text>
+            
+            <!-- Sudut Elevasi -->
+            <path d="M 100,140 A 40 40 0 0 0 95,123" fill="none" stroke="#f43f5e" stroke-width="2" />
+            <text x="110" y="133" font-size="11" fill="#f43f5e">30°</text>
+          </svg>
+        `;
+      } else if (q.visualType === 'segitiga_klm') {
+        caption.innerText = 'Segitiga Siku-Siku KLM (Siku-siku di L, KL = 3, LM = 4)';
+        svgContent = `
+          <svg viewBox="0 0 400 250" class="w-full h-auto">
+            <rect width="400" height="250" fill="#f8fafc" />
+            
+            <!-- Triangle PQR -->
+            <path d="M 100,60 L 100,200 L 300,200 Z" fill="#e0e7ff" stroke="#4f46e5" stroke-width="3" stroke-linejoin="round"/>
+            
+            <!-- Right angle square indicator at L -->
+            <rect x="100" y="185" width="15" height="15" fill="none" stroke="#4f46e5" stroke-width="2"/>
+            
+            <!-- Vertices Label -->
+            <text x="95" y="50" font-size="14" font-weight="bold" fill="#1e1b4b">K</text>
+            <text x="85" y="215" font-size="14" font-weight="bold" fill="#1e1b4b">L (Siku-siku)</text>
+            <text x="315" y="210" font-size="14" font-weight="bold" fill="#1e1b4b">M (β)</text>
+            
+            <!-- Side values -->
+            <text x="75" y="135" font-size="12" font-weight="bold" fill="#475569">KL = 3</text>
+            <text x="190" y="220" font-size="12" font-weight="bold" fill="#475569">LM = 4</text>
+            <text x="210" y="115" font-size="12" font-style="italic" fill="#a21caf">KM = 5 (Miring)</text>
+            
+            <!-- Arc for Beta (β) at M -->
+            <path d="M 260,200 A 40 40 0 0 0 268,178" fill="none" stroke="#a21caf" stroke-width="2" />
+            <text x="250" y="190" font-size="12" font-weight="bold" fill="#a21caf">β</text>
+          </svg>
+        `;
+      } else if (q.visualType === 'segitiga_pqr') {
+        caption.innerText = 'Segitiga Siku-Siku PQR (Siku-siku di Q, PR = 2, QR = 1)';
+        svgContent = `
+          <svg viewBox="0 0 400 250" class="w-full h-auto">
+            <rect width="400" height="250" fill="#f8fafc" />
+            
+            <!-- Triangle PQR -->
+            <path d="M 100,80 L 100,200 L 280,200 Z" fill="#fee2e2" stroke="#ef4444" stroke-width="3" stroke-linejoin="round"/>
+            
+            <!-- Right Angle Box at Q -->
+            <rect x="100" y="188" width="12" height="12" fill="none" stroke="#ef4444" stroke-width="2"/>
+            
+            <!-- Vertices Label -->
+            <text x="90" y="215" font-size="14" font-weight="bold" fill="#7f1d1d">Q</text>
+            <text x="290" y="210" font-size="14" font-weight="bold" fill="#7f1d1d">R</text>
+            <text x="95" y="70" font-size="14" font-weight="bold" fill="#ef4444">P (α)</text>
+            
+            <!-- Side labels -->
+            <text x="195" y="218" font-size="12" fill="#475569">QR = 1</text>
+            <text x="200" y="125" font-size="12" fill="#475569">PR = 2 (Miring)</text>
+            <text x="45" y="145" font-size="12" font-weight="bold" fill="#ef4444">PQ = √3</text>
+            
+            <!-- Arc for Alpha (α) at P -->
+            <path d="M 100,110 A 30 30 0 0 0 115,90" fill="none" stroke="#b91c1c" stroke-width="2" />
+            <text x="110" y="125" font-size="12" font-weight="bold" fill="#b91c1c">α</text>
+          </svg>
+        `;
+      } else if (q.visualType === 'layang_layang') {
+        caption.innerText = 'Ilustrasi Teorema Pythagoras Kasus Layang-layang';
+        svgContent = `
+          <svg viewBox="0 0 400 250" class="w-full h-auto">
+            <rect width="400" height="250" fill="#f8fafc" />
+            <line x1="10" y1="210" x2="390" y2="210" stroke="#94a3b8" stroke-width="2"/>
+            
+            <!-- Anak -->
+            <circle cx="80" cy="200" r="6" fill="#4f46e5" />
+            <line x1="80" y1="206" x2="80" y2="210" stroke="#4f46e5" stroke-width="2" />
+            
+            <!-- Layang-layang -->
+            <path d="M 300,70 L 315,60 L 300,45 L 285,60 Z" fill="#ec4899" stroke="#db2777" stroke-width="2" />
+            <line x1="300" y1="45" x2="300" y2="70" stroke="#db2777" stroke-width="1.5" />
+            <line x1="285" y1="60" x2="315" y2="60" stroke="#db2777" stroke-width="1.5" />
+            <!-- Tail -->
+            <path d="M 300,70 Q 305,90 295,110" fill="none" stroke="#db2777" stroke-width="2" />
+            
+            <!-- Benang Layangan -->
+            <line x1="80" y1="200" x2="300" y2="70" stroke="#64748b" stroke-width="1.5" stroke-dasharray="2" />
+            
+            <!-- Garis proyeksi tegak lurus -->
+            <line x1="300" y1="70" x2="300" y2="210" stroke="#e11d48" stroke-width="2" stroke-dasharray="4"/>
+            <rect x="290" y="200" width="10" height="10" fill="none" stroke="#e11d48" stroke-width="1.5" />
+            
+            <!-- Labels -->
+            <text x="145" y="125" font-size="11" fill="#475569" transform="rotate(-30 145 125)">Benang = 20 m</text>
+            <text x="180" y="225" font-size="11" fill="#475569">Jarak horizontal = 16 m</text>
+            <text x="310" y="145" font-size="11" font-weight="bold" fill="#e11d48">Tinggi (t) = 12 m</text>
+          </svg>
+        `;
+      } else {
+        container.classList.add('hidden');
+        return;
+      }
+
+      wrapper.innerHTML = svgContent;
+    }
+
+    // Interactivity: Save answers
+    function selectPGAnswer(oIdx) {
+      userAnswers[currentQuestionIdx] = oIdx;
+      renderQuestion();
+      showToast('✅ Pilihan disimpan', 'success');
+    }
+
+    function saveEssayAnswer(val) {
+      userAnswers[currentQuestionIdx] = val;
+      updateSidebarProgress();
+    }
+
+    function toggleFlagActiveQuestion() {
+      flaggedQuestions[currentQuestionIdx] = !flaggedQuestions[currentQuestionIdx];
+      renderQuestion();
+      showToast(flaggedQuestions[currentQuestionIdx] ? '📍 Ditandai Ragu-Ragu' : '⚪ Batal Ditandai', 'info');
+    }
+
+    // Check individual answer in Learning Mode
+    function checkCurrentAnswer() {
+      if (appMode !== 'belajar') return;
+      checkedAnswers[currentQuestionIdx] = true;
+      renderQuestion();
+      showToast('📖 Pembahasan Terbuka', 'success');
+    }
+
+    // Navigation Controls
+    function jumpToQuestion(idx) {
+      currentQuestionIdx = idx;
+      renderQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIdx < questions.length - 1) {
+        currentQuestionIdx++;
+        renderQuestion();
+      } else {
+        showToast('Ini adalah nomor soal terakhir.', 'info');
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIdx > 0) {
+        currentQuestionIdx--;
+        renderQuestion();
+      }
+    }
+
+    // Switch between study mode & exam mode
+    function switchMode(mode) {
+      appMode = mode;
+      
+      const btnBelajar = document.getElementById('btn-mode-belajar');
+      const btnUjian = document.getElementById('btn-mode-ujian');
+      const timerContainer = document.getElementById('exam-timer-container');
+      const submitBtn = document.getElementById('btn-submit-exam');
+      const banner = document.getElementById('banner-mode-info');
+      const quizWorkspace = document.getElementById('quiz-workspace');
+      const reportWorkspace = document.getElementById('report-workspace');
+
+      quizWorkspace.classList.remove('hidden');
+      reportWorkspace.classList.add('hidden');
+
+      if (mode === 'belajar') {
+        // Mode Belajar
+        btnBelajar.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center space-x-1 bg-white text-indigo-600 shadow-sm';
+        btnUjian.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center space-x-1 text-slate-600 hover:text-slate-900';
+        timerContainer.classList.add('hidden');
+        submitBtn.classList.add('hidden');
+        banner.classList.remove('hidden');
+        
+        // Stop timer
+        clearInterval(examTimerInterval);
+        examStarted = false;
+        
+      } else {
+        // Mode Ujian
+        btnUjian.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center space-x-1 bg-white text-indigo-600 shadow-sm';
+        btnBelajar.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 flex items-center space-x-1 text-slate-600 hover:text-slate-900';
+        timerContainer.classList.remove('hidden');
+        submitBtn.classList.remove('hidden');
+        banner.classList.add('hidden');
+        
+        // Start exam timer if not started
+        if (!examStarted) {
+          startExamTimer();
+        }
+      }
+      
+      renderQuestion();
+    }
+
+    // Exam Timer Logic
+    function startExamTimer() {
+      examStarted = true;
+      examTimeLeft = 2700; // 45 minutes
+      startTime = Date.now();
+
+      updateTimerUI();
+      
+      examTimerInterval = setInterval(() => {
+        examTimeLeft--;
+        updateTimerUI();
+        
+        if (examTimeLeft <= 0) {
+          clearInterval(examTimerInterval);
+          examFinishedAuto();
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI() {
+      const minutes = Math.floor(examTimeLeft / 60);
+      const seconds = examTimeLeft % 60;
+      const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      
+      const timerElement = document.getElementById('exam-timer');
+      timerElement.innerText = formatted;
+
+      // Color warning when < 5 mins left
+      if (examTimeLeft < 300) {
+        timerElement.parentElement.classList.replace('bg-rose-50', 'bg-red-500');
+        timerElement.parentElement.classList.replace('text-rose-700', 'text-white');
+      } else {
+        timerElement.parentElement.className = 'bg-rose-50 border border-rose-100 px-3 py-1.5 rounded-xl flex items-center space-x-2 text-rose-700 font-bold text-sm';
+      }
+    }
+
+    // Finish Exam Processes
+    function finishExamPrompt() {
+      // Check for unanswered questions
+      let unanswered = [];
+      questions.forEach((q, idx) => {
+        if (userAnswers[idx] === undefined || userAnswers[idx] === '') {
+          unanswered.push(q.id);
+        }
+      });
+
+      let confirmMsg = 'Apakah Anda yakin ingin menyelesaikan simulasi ujian sekarang?';
+      if (unanswered.length > 0) {
+        confirmMsg = `⚠️ Perhatian! Masih ada ${unanswered.length} soal yang belum Anda isi (Nomor: ${unanswered.join(', ')}). \n\nApakah Anda tetap ingin menyelesaikan simulasi ini?`;
+      }
+
+      if (confirm(confirmMsg)) {
+        calculateAndShowReport();
+      }
+    }
+
+    function examFinishedAuto() {
+      alert('⏰ Waktu simulasi ujian telah habis! Jawaban Anda akan dihitung otomatis.');
+      calculateAndShowReport();
+    }
+
+    // Scoring & Analysis Engine
+    let finalScore = 0;
+    function calculateAndShowReport() {
+      clearInterval(examTimerInterval);
+      
+      // Calculate times spent
+      const totalTime = 2700;
+      timeSpentSeconds = totalTime - examTimeLeft;
+      const spentMin = Math.floor(timeSpentSeconds / 60);
+      const spentSec = timeSpentSeconds % 60;
+      document.getElementById('report-time-spent').innerText = `${spentMin}:${String(spentSec).padStart(2, '0')}`;
+
+      // Calculate PG Accuracy
+      let pgCorrect = 0;
+      let totalPg = 0;
+      let scoreSum = 0;
+
+      let exponentTotal = 0;
+      let exponentCorrect = 0;
+      let trigTotal = 0;
+      let trigCorrect = 0;
+
+      questions.forEach((q, idx) => {
+        const isCorrect = q.type === 'PG' && userAnswers[idx] === q.correctOptionIdx;
+        
+        if (q.type === 'PG') {
+          totalPg++;
+          if (isCorrect) {
+            pgCorrect++;
+            scoreSum += (100 / questions.length); // weighted out of total 20 questions
+          }
+          
+          // Categorize for Analytics
+          if (q.topic === 'Eksponen') {
+            exponentTotal++;
+            if (isCorrect) exponentCorrect++;
+          } else {
+            trigTotal++;
+            if (isCorrect) trigCorrect++;
+          }
+        } else {
+          // For Essay, let's auto-score simple standard answers for presentation,
+          // though real grading would be rubrics-based, we'll provide automatic parsing of key values.
+          const userText = String(userAnswers[idx] || '').toLowerCase().trim();
+          const cleanCorrect = q.correctSample.toLowerCase().trim();
+          
+          // Try exact matches or keyword match
+          let essayIsCorrect = false;
+          if (userText !== '') {
+            if (userText.includes(cleanCorrect) || cleanCorrect.split(' atau ').some(key => userText.includes(key.trim()))) {
+              essayIsCorrect = true;
+              scoreSum += (100 / questions.length);
+            }
+          }
+
+          if (q.topic === 'Eksponen') {
+            exponentTotal++;
+            if (essayIsCorrect) exponentCorrect++;
+          } else {
+            trigTotal++;
+            if (essayIsCorrect) trigCorrect++;
+          }
+        }
+      });
+
+      // Scale up score to 100 max
+      finalScore = Math.min(Math.round(scoreSum), 100);
+
+      // Render Dashboard Analytics Card
+      document.getElementById('report-score').innerText = finalScore;
+      document.getElementById('report-pg-stat').innerText = `${pgCorrect} / ${totalPg}`;
+      
+      const pgPercent = Math.round((pgCorrect / totalPg) * 100);
+      document.getElementById('report-pg-percent').innerText = `${pgPercent}% Akurasi`;
+
+      // Set greeting message
+      const greeting = document.getElementById('report-greeting');
+      const emoji = document.getElementById('report-emoji');
+      if (finalScore >= 80) {
+        greeting.innerText = 'Luar Biasa! Kompetensi Anda Sangat Baik.';
+        emoji.innerText = '🏆';
+      } else if (finalScore >= 60) {
+        greeting.innerText = 'Bagus! Kompetensi Anda Cukup Baik.';
+        emoji.innerText = '⭐';
+      } else {
+        greeting.innerText = 'Perlu Lebih Banyak Belajar Mandiri.';
+        emoji.innerText = '📚';
+      }
+
+      // Update Topik Progress bars
+      const exponentAcc = exponentTotal > 0 ? Math.round((exponentCorrect / exponentTotal) * 100) : 0;
+      const trigAcc = trigTotal > 0 ? Math.round((trigCorrect / trigTotal) * 100) : 0;
+
+      document.getElementById('analytics-exponent-percent').innerText = `${exponentAcc}% Penguasaan`;
+      document.getElementById('analytics-exponent-bar').style.width = `${exponentAcc}%`;
+      if (exponentAcc < 50) document.getElementById('analytics-exponent-bar').className = 'bg-rose-500 h-2 rounded-full';
+      else if (exponentAcc < 75) document.getElementById('analytics-exponent-bar').className = 'bg-amber-500 h-2 rounded-full';
+      else document.getElementById('analytics-exponent-bar').className = 'bg-emerald-500 h-2 rounded-full';
+
+      document.getElementById('analytics-trig-percent').innerText = `${trigAcc}% Penguasaan`;
+      document.getElementById('analytics-trig-bar').style.width = `${trigAcc}%`;
+      if (trigAcc < 50) document.getElementById('analytics-trig-bar').className = 'bg-rose-500 h-2 rounded-full';
+      else if (trigAcc < 75) document.getElementById('analytics-trig-bar').className = 'bg-amber-500 h-2 rounded-full';
+      else document.getElementById('analytics-trig-bar').className = 'bg-emerald-500 h-2 rounded-full';
+
+      // Render Detailed Answer Checklists
+      renderAnswerReviewList();
+
+      // Switch Workspaces
+      document.getElementById('quiz-workspace').classList.add('hidden');
+      document.getElementById('report-workspace').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderAnswerReviewList() {
+      const container = document.getElementById('report-details-list');
+      container.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const item = document.createElement('div');
+        item.className = 'py-4 flex flex-col gap-2';
+
+        const isPg = q.type === 'PG';
+        let statusBadge = '';
+        let statusBorder = '';
+        let isCorrect = false;
+
+        if (isPg) {
+          isCorrect = userAnswers[idx] === q.correctOptionIdx;
+          if (userAnswers[idx] === undefined) {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">KOSONG</span>';
+          } else if (isCorrect) {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">✓ BENAR</span>';
+          } else {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700">✗ SALAH</span>';
+          }
+        } else {
+          // Essay
+          const text = String(userAnswers[idx] || '').trim().toLowerCase();
+          const cleanCorrect = q.correctSample.toLowerCase().trim();
+          isCorrect = text !== '' && (text.includes(cleanCorrect) || cleanCorrect.split(' atau ').some(key => text.includes(key.trim())));
+          
+          if (text === '') {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">KOSONG</span>';
+          } else if (isCorrect) {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">✓ TERVERIFIKASI</span>';
+          } else {
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700">✍️ BUTUH REVIEW MANDIRI</span>';
+          }
+        }
+
+        const alphabet = ['A', 'B', 'C', 'D', 'E'];
+        const optText = isPg && userAnswers[idx] !== undefined ? q.options[userAnswers[idx]] : 'Tidak ada jawaban';
+
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-800 text-sm">Nomor ${q.id} (${q.topic})</span>
+            ${statusBadge}
+          </div>
+          <p class="text-xs text-slate-500 line-clamp-2">${q.text}</p>
+          <div class="bg-slate-50 p-2.5 rounded-lg text-xs border border-slate-100 space-y-1">
+            <div><span class="font-bold text-slate-400">Jawaban Anda:</span> <span class="text-slate-700 font-medium">${isPg ? (userAnswers[idx] !== undefined ? `${alphabet[userAnswers[idx]]}. ${optText}` : '-') : (userAnswers[idx] || '-')}</span></div>
+            ${isPg ? `<div><span class="font-bold text-slate-400">Kunci Jawaban:</span> <span class="text-emerald-700 font-bold">${alphabet[q.correctOptionIdx]}. ${q.options[q.correctOptionIdx]}</span></div>` : `<div><span class="font-bold text-slate-400">Kunci/Kata Kunci:</span> <span class="text-emerald-700 font-bold">${q.correctSample}</span></div>`}
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Reset All State
+    function resetQuiz() {
+      if (confirm('Apakah Anda yakin ingin menyetel ulang seluruh progres belajar atau ujian ini?')) {
+        questions.forEach((q, idx) => {
+          delete userAnswers[idx];
+          delete flaggedQuestions[idx];
+          delete checkedAnswers[idx];
+        });
+        
+        currentQuestionIdx = 0;
+        clearInterval(examTimerInterval);
+        examStarted = false;
+        examTimeLeft = 2700;
+        
+        switchMode(appMode);
+        showToast('🔄 Progress disetel ulang', 'info');
+      }
+    }
+
+    // Toast Alert
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('custom-toast');
+      const icon = document.getElementById('toast-icon');
+      const msg = document.getElementById('toast-message');
+
+      msg.innerText = message;
+      if (type === 'success') {
+        icon.innerText = '✅';
+        toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3 text-xs z-50 transform translate-y-0 opacity-100';
+      } else if (type === 'error') {
+        icon.innerText = '❌';
+        toast.className = 'fixed bottom-6 right-6 bg-rose-600 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3 text-xs z-50 transform translate-y-0 opacity-100';
+      } else {
+        icon.innerText = 'ℹ️';
+        toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3 text-xs z-50 transform translate-y-0 opacity-100';
+      }
+
+      setTimeout(() => {
+        toast.className = 'fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3 text-xs z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none';
+      }, 2500);
+    }
+
+    // Certificate Operations
+    function generateCertificate() {
+      const name = prompt('Masukkan Nama Lengkap Anda untuk Dicantumkan di Sertifikat:', 'Siswa Unggul');
+      if (name === null) return; // cancel click
+      
+      document.getElementById('cert-user-name').innerText = name || 'Siswa Unggul';
+      document.getElementById('cert-score').innerText = `${finalScore} / 100`;
+
+      // Determine predicate
+      let predicate = 'Cukup Memuaskan';
+      if (finalScore >= 90) predicate = 'Dengan Pujian (Summa Cum Laude)';
+      else if (finalScore >= 80) predicate = 'Sangat Memuaskan';
+      else if (finalScore >= 60) predicate = 'Memuaskan';
+      document.getElementById('cert-predicate').innerText = predicate;
+
+      document.getElementById('certificate-modal').classList.remove('hidden');
+    }
+
+    function closeCertificate() {
+      document.getElementById('certificate-modal').classList.add('hidden');
+    }
+
+    function printCert() {
+      window.print();
+    }
+
+    // Window Init Event
+    window.onload = function() {
+      renderQuestion();
+    }
+  </script>
+</body>
+</html>
